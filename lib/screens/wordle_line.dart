@@ -83,13 +83,15 @@ class _WordleLineState extends State<WordleLine>
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          for (int i in [0, 1, 2, 3, 4])
-            WordleLetter(
-              letter: widget.text[i],
-              letterGuess:
-                  triggerCount >= i ? widget.guess?.guessAtIndex(i) : null,
+          for (int i = 0; i < maxWordLength; i++)
+            Expanded(
+              child: WordleLetter(
+                letter: widget.text[i],
+                letterGuess:
+                    triggerCount >= i ? widget.guess?.guessAtIndex(i) : null,
+              ),
             ),
         ],
       ),

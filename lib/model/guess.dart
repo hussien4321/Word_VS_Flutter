@@ -9,7 +9,6 @@ class Guess {
         assert(word.length == maxWordLength) {
     var results = <LetterGuess?>[null, null, null, null, null];
     var remainingAnswers = answer;
-    print('starting answer = "$remainingAnswers"');
     //Step 1 - find correct positions
     for (int i = 0; i < word.length; i++) {
       final letter = word[i];

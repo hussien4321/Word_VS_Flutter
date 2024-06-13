@@ -8,6 +8,12 @@ final keyboardLine3 = ['Z', 'X', 'C', 'V', 'B', 'N', 'M'];
 
 const flipLetterAnimationDuration = Duration(milliseconds: 300);
 
+const maxKeyboardFontSize = 25.0;
+const maxGuessFontSize = 30.0;
+
+final guessesSectionAspectRatio = maxWordLength / maxAttempts;
+const keyboardAspectRatio = 11 / 6;
+
 final possibleValidWords = [
   "aback",
   "abase",
@@ -2325,7 +2331,6 @@ final possibleValidWords = [
   "zesty",
   "zonal",
 ];
-
 final possibleValidGuesses = [
   "aback",
   "abase",

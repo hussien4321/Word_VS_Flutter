@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:wordle_vs/model/guess.dart';
 import 'package:wordle_vs/utils/constants.dart';
@@ -86,19 +88,20 @@ class _WordleLetterState extends State<WordleLetter>
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final smallestSide = min(size.width, size.height * 0.6);
+    final fontSize = min(maxGuessFontSize, smallestSide / 20.0);
+
     return Transform.scale(
       scaleY: controller.isAnimating ? (1 - controller.value * 2).abs() : 1.0,
-      // transform: Matrix4.diagonal3Values(1.5, 1, 1.0),
       child: Container(
-        width: 60,
-        height: 60,
         margin: const EdgeInsets.symmetric(horizontal: 4),
         decoration: BoxDecoration(
           border: letterGuess != null
               ? null
               : Border.all(
                   color: Colors.grey,
-                  width: 3,
+                  width: 2,
                 ),
           color: _calculateColor(),
         ),
@@ -107,10 +110,10 @@ class _WordleLetterState extends State<WordleLetter>
           child: Center(
             child: Text(
               widget.letter,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleLarge
-                  ?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: fontSize,
+                  ),
             ),
           ),
         ),

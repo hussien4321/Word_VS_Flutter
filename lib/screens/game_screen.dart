@@ -29,7 +29,7 @@ class _GameScreenState extends State<GameScreen> {
     final wordsList = words.split('\n');
     final random = Random();
     final answer = wordsList[random.nextInt(wordsList.length)].toUpperCase();
-    print('answer is ${answer}');
+    print('answer is $answer');
     wordlee = Wordlee(answer: answer);
     setState(() {
       isLoading = false;
@@ -41,7 +41,7 @@ class _GameScreenState extends State<GameScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.menu),
+          icon: const Icon(Icons.menu),
           onPressed: () {},
         ),
         title: const Text(
@@ -66,62 +66,130 @@ class _GameScreenState extends State<GameScreen> {
             )
           : SafeArea(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(height: 40),
-                  for (int index in [0, 1, 2, 3, 4, 5])
-                    WordleLine(
-                      wordlee: wordlee,
-                      index: index,
+                  const SizedBox(height: 20),
+                  Expanded(
+                    flex: 5,
+                    child: AspectRatio(
+                      aspectRatio: guessesSectionAspectRatio,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          for (int i = 0; i < maxAttempts; i++)
+                            Expanded(
+                              child: WordleLine(
+                                wordlee: wordlee,
+                                index: i,
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
-                  Expanded(child: SizedBox.shrink()),
-                  _buildKeyboard(),
-                  SizedBox(height: 20),
+                  ),
+                  const Expanded(flex: 1, child: SizedBox.shrink()),
+                  Expanded(
+                    flex: 3,
+                    child: _buildKeyboard(context),
+                  ),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
     );
   }
 
-  Widget _buildKeyboard() {
-    return Column(
-      children: [
-        for (final line in [keyboardLine1, keyboardLine2]) ...[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [for (final letter in line) _buildKeyboardButton(letter)],
+  Widget _buildKeyboard(BuildContext context) {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: AspectRatio(
+          aspectRatio: keyboardAspectRatio,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Expanded(
+                flex: 1,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Expanded(flex: 1, child: SizedBox.shrink()),
+                    for (final letter in keyboardLine1)
+                      _buildKeyboardButton(letter),
+                    const Expanded(flex: 1, child: SizedBox.shrink()),
+                  ],
+                ),
+              ),
+              // const SizedBox(height: 4),
+              Expanded(
+                flex: 1,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Expanded(flex: 2, child: SizedBox.shrink()),
+                    for (final letter in keyboardLine2)
+                      _buildKeyboardButton(letter),
+                    const Expanded(flex: 2, child: SizedBox.shrink()),
+                  ],
+                ),
+              ),
+              // const SizedBox(height: 4),
+              Expanded(
+                flex: 1,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _buildKeyboardButton(
+                      'SUBMIT',
+                      onTap: () {
+                        wordlee.submitWord();
+                        setState(() {});
+                      },
+                    ),
+                    for (final letter in keyboardLine3)
+                      _buildKeyboardButton(letter),
+                    _buildKeyboardButton(
+                      'DELETE',
+                      onTap: () {
+                        wordlee.clearWord();
+                        setState(() {});
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 4),
-        ],
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildKeyboardButton('ENTER', onTap: () {
-              wordlee.submitWord();
-              setState(() {});
-            }),
-            for (final letter in keyboardLine3) _buildKeyboardButton(letter),
-            _buildKeyboardButton('DELETE', onTap: () {
-              wordlee.clearWord();
-              setState(() {});
-            }),
-          ],
         ),
-      ],
+      ),
     );
   }
 
-  Widget _buildKeyboardButton(String letter, {VoidCallback? onTap}) {
+  Widget _buildKeyboardButton(
+    String letter, {
+    VoidCallback? onTap,
+  }) {
     final isSpecial = onTap != null;
 
-    return KeyboardLetter(
-      letter: letter,
-      isValid: isSpecial ? true : wordlee.isValidLetter(letter),
-      isSpecial: isSpecial,
-      onTap: onTap ??
-          () {
-            wordlee.inputLetter(letter);
-            setState(() {});
-          },
+    return Expanded(
+      flex: isSpecial ? 4 : 2,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 2.0, vertical: 1.0),
+        child: KeyboardLetter(
+          letter: letter,
+          isValid: isSpecial ? true : wordlee.isValidLetter(letter),
+          isSpecial: isSpecial,
+          onTap: onTap ??
+              () {
+                wordlee.inputLetter(letter);
+                setState(() {});
+              },
+        ),
+      ),
     );
   }
 }

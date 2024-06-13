@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:wordle_vs/utils/constants.dart';
 import 'package:wordle_vs/utils/string_extensions.dart';
 
 class KeyboardLetter extends StatelessWidget {
@@ -17,14 +20,19 @@ class KeyboardLetter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final isSpecial = widget.isSpecial;
-    final backgroundColor = isValid ? Colors.grey : ColorTween(begin:Colors.grey.shade300,end: Colors.grey.shade400).lerp(0.5);
+    final backgroundColor = isValid
+        ? Colors.grey
+        : ColorTween(begin: Colors.grey.shade300, end: Colors.grey.shade400)
+            .lerp(0.5);
+
+    final size = MediaQuery.of(context).size;
+    final smallestSide =
+        min(size.width, size.height * (1 / keyboardAspectRatio));
+    final fontSize = min(maxKeyboardFontSize, smallestSide / 30.0);
+
     final borderRadius = BorderRadius.circular(4);
 
     return Container(
-      width: isSpecial ? 60 : 35,
-      height: 60,
-      margin: const EdgeInsets.symmetric(horizontal: 2),
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: borderRadius,
@@ -43,7 +51,7 @@ class KeyboardLetter extends StatelessWidget {
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
-                      fontSize: isSpecial ? 13 : null,
+                      fontSize: isSpecial ? fontSize : fontSize * (7 / 5),
                     ),
               ),
             ),
