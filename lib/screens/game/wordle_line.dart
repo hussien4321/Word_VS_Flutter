@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wordle_vs/model/guess.dart';
 import 'package:wordle_vs/model/wordlee.dart';
-import 'package:wordle_vs/screens/wordle_letter.dart';
+import 'package:wordle_vs/screens/game/wordle_letter.dart';
 import 'package:wordle_vs/utils/constants.dart';
 
 class WordleLine extends StatefulWidget {
@@ -9,6 +9,7 @@ class WordleLine extends StatefulWidget {
     super.key,
     required this.wordlee,
     required int index,
+    this.isLastLine = false,
   }) {
     text = wordlee.getWord(index);
     guess = wordlee.getGuess(index);
@@ -19,6 +20,7 @@ class WordleLine extends StatefulWidget {
   final Wordlee wordlee;
   late final String text;
   late final Guess? guess;
+  final bool isLastLine;
 
   @override
   State<WordleLine> createState() => _WordleLineState();
@@ -91,6 +93,7 @@ class _WordleLineState extends State<WordleLine>
                 letter: widget.text[i],
                 letterGuess:
                     triggerCount >= i ? widget.guess?.guessAtIndex(i) : null,
+                isLastLine: widget.isLastLine,
               ),
             ),
         ],

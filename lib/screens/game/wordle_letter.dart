@@ -10,10 +10,12 @@ class WordleLetter extends StatefulWidget {
     super.key,
     required this.letter,
     this.letterGuess,
+    this.isLastLine = false,
   }) : assert(letter.isLetter);
 
   final String letter;
   final LetterGuess? letterGuess;
+  final bool isLastLine;
 
   @override
   State<WordleLetter> createState() => _WordleLetterState();
@@ -80,7 +82,7 @@ class _WordleLetterState extends State<WordleLetter>
       case LetterGuess.correctValue:
         return Colors.orange;
       case LetterGuess.incorrect:
-        return Colors.grey;
+        return widget.isLastLine ? Colors.red.shade400 : Colors.grey;
       default:
         return Colors.white;
     }

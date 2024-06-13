@@ -17,6 +17,8 @@ class Wordlee {
   late List<String> _words;
   final List<Guess> _guesses = [];
 
+  bool get isInProgress => state == GameState.inProgress;
+
   List<Guess> get guesses => _guesses;
 
   String get _currentWord {
@@ -30,6 +32,19 @@ class Wordlee {
   Guess? getGuess(int index) {
     if (index + 1 <= _guesses.length) {
       return _guesses[index];
+    }
+    return null;
+  }
+
+  String? validateSubmission() {
+    if (_guesses.length == maxAttempts) {
+      return 'No more attempts remaining';
+    } else if (_currentWord.length < maxWordLength) {
+      return 'Word is incomplete';
+    } else if (_words.sublist(0, _currentIndex).contains(_currentWord)) {
+      return 'Cannot reuse previous word';
+    } else if (!possibleValidGuesses.contains(_currentWord.toLowerCase())) {
+      return 'Not a valid guess';
     }
     return null;
   }
@@ -79,6 +94,10 @@ class Wordlee {
       return true;
     }
     return !hasAnyIncorrectGuess;
+  }
+
+  void failGame() {
+    state = GameState.failed;
   }
 }
 

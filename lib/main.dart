@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:wordle_vs/screens/game_screen.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:wordle_vs/screens/menu/menu_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -8,17 +9,19 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
+    return GetMaterialApp(
+      title: 'WordlVS',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.grey,
+          background: Colors.grey.shade100,
+        ),
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: const GameScreen(),
+      home: const MenuScreen(),
     );
   }
 }
