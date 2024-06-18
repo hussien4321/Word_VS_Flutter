@@ -3,7 +3,9 @@ import 'package:wordle_vs/utils/constants.dart';
 import 'package:wordle_vs/utils/string_extensions.dart';
 
 class Wordlee {
-  Wordlee({required this.answer}) : assert(answer.length == maxWordLength) {
+  Wordlee({
+    required this.answer,
+  }) : assert(answer.length == maxWordLength) {
     final words = <String>[];
     for (int i = 0; i < maxAttempts; i++) {
       words.add("");

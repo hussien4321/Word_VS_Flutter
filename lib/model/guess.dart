@@ -62,7 +62,7 @@ class Guess {
     final valids = <String>{};
     for (int i = 0; i < word.length; i++) {
       if ((_results[i] == LetterGuess.correctValue ||
-          _results[i] == LetterGuess.correctValue)) {
+          _results[i] == LetterGuess.correctPosition)) {
         valids.add(word[i]);
       }
     }

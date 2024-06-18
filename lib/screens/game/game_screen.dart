@@ -16,7 +16,7 @@ class GameScreen extends StatefulWidget {
   }) {
     final random = Random();
     final randomAnswer =
-        possibleValidGuesses[random.nextInt(possibleValidGuesses.length)]
+        possibleValidGuesses[random.nextInt(possibleValidWords.length)]
             .toUpperCase();
     final finalAnswer = answer ?? randomAnswer;
 
