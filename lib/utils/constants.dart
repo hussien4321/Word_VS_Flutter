@@ -7,6 +7,7 @@ final keyboardLine2 = ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'];
 final keyboardLine3 = ['Z', 'X', 'C', 'V', 'B', 'N', 'M'];
 
 const flipLetterAnimationDuration = Duration(milliseconds: 300);
+const confettiAnimationDuration = Duration(milliseconds: 100);
 
 const maxKeyboardFontSize = 25.0;
 const maxGuessFontSize = 30.0;

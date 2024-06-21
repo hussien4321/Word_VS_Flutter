@@ -1,10 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:wordle_vs/screens/game/game_screen.dart';
+import 'package:wordle_vs/screens/menu/results_dialog.dart';
 import 'package:wordle_vs/utils/snackbar.dart';
 
 class MenuScreen extends StatelessWidget {
   const MenuScreen({super.key});
+
+  _showTestPopUp(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          child: ResultsDialog(),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +38,9 @@ class MenuScreen extends StatelessWidget {
               Colors.blue.shade200,
             ],
             onTap: () {
-              Get.to(() =>
-                GameScreen(
+              Get.to(
+                () => GameScreen(
+                  answer: 'AUDIO',
                   duration: const Duration(minutes: 1),
                 ),
               );
@@ -48,10 +62,12 @@ class MenuScreen extends StatelessWidget {
               Colors.orange,
             ],
             onTap: () {
-              quickSnackbar(
-                "In progress",
-                "Come back later",
-              );
+              _showTestPopUp(context);
+              // quickSnackbar(
+              //   "In progress",'
+
+              //   "Come back later",
+              // );
             },
           ),
           _buildSectionButton(

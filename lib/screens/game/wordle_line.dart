@@ -9,6 +9,8 @@ class WordleLine extends StatefulWidget {
     super.key,
     required this.wordlee,
     required int index,
+    required this.onStartAnimation,
+    required this.onFinishAnimation,
     this.isLastLine = false,
   }) {
     text = wordlee.getWord(index);
@@ -21,6 +23,8 @@ class WordleLine extends StatefulWidget {
   late final String text;
   late final Guess? guess;
   final bool isLastLine;
+  final VoidCallback onStartAnimation;
+  final VoidCallback onFinishAnimation;
 
   @override
   State<WordleLine> createState() => _WordleLineState();
@@ -55,6 +59,8 @@ class _WordleLineState extends State<WordleLine>
       if (triggerCount < maxWordLength - 1) {
         triggerCount++;
         controller.forward(from: 0.0);
+      } else {
+        widget.onFinishAnimation();
       }
     }
   }
@@ -78,6 +84,7 @@ class _WordleLineState extends State<WordleLine>
   _startAnimation() {
     triggerCount = 0;
     controller.forward(from: 0.0);
+    widget.onStartAnimation();
   }
 
   @override

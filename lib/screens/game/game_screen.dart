@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:wordle_vs/model/wordlee.dart';
 import 'package:wordle_vs/screens/game/colored_progress_bar.dart';
@@ -37,6 +38,10 @@ class _GameScreenState extends State<GameScreen>
 
   late AnimationController controller;
 
+  final ConfettiController confettiController = ConfettiController(
+    duration: confettiAnimationDuration,
+  );
+
   @override
   void initState() {
     super.initState();
@@ -60,6 +65,7 @@ class _GameScreenState extends State<GameScreen>
     if (status == AnimationStatus.completed) {
       if (widget.wordlee.state == GameState.inProgress) {
         widget.wordlee.failGame();
+        _showEndGameScreen();
       }
     }
   }
@@ -71,19 +77,51 @@ class _GameScreenState extends State<GameScreen>
     super.dispose();
   }
 
+  _showEndGameScreen() {
+    if (widget.wordlee.state == GameState.succeeded) {
+      confettiController.play();
+    }
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          child: Text('You Win!'),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+    return Stack(
+      children: [
+        Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            backgroundColor: Colors.transparent,
+          ),
+          body:
+              isLoading ? _buildLoadingIndicator(context) : _buildBody(context),
         ),
-        backgroundColor: Colors.transparent,
-      ),
-      body: isLoading ? _buildLoadingIndicator(context) : _buildBody(context),
+        Align(
+          alignment: Alignment.topCenter,
+          child: ConfettiWidget(
+            confettiController: confettiController,
+            blastDirection: pi / 2,
+            shouldLoop: false,
+            gravity: 0.1,
+            emissionFrequency: 1,
+            numberOfParticles: 50,
+            blastDirectionality: BlastDirectionality.explosive,
+          ),
+        ),
+      ],
     );
   }
 
@@ -128,6 +166,12 @@ class _GameScreenState extends State<GameScreen>
                 wordlee: widget.wordlee,
                 index: i,
                 isLastLine: i == maxAttempts - 1,
+                onStartAnimation: () {},
+                onFinishAnimation: () {
+                  if (widget.wordlee.state == GameState.succeeded) {
+                    confettiController.play();
+                  }
+                },
               ),
             ),
         ],
