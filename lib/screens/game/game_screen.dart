@@ -2,31 +2,37 @@ import 'dart:math';
 
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
-import 'package:wordle_vs/model/wordlee.dart';
+import 'package:wordle_vs/model/game_data/wordlee_config.dart';
+import 'package:wordle_vs/model/game_logic/wordlee_game.dart';
 import 'package:wordle_vs/screens/game/colored_progress_bar.dart';
 import 'package:wordle_vs/screens/game/keyboard_key.dart';
 import 'package:wordle_vs/screens/game/wordle_line.dart';
+import 'package:wordle_vs/screens/menu/results_dialog_1p.dart';
+import 'package:wordle_vs/screens/menu/results_dialog_2p.dart';
 import 'package:wordle_vs/utils/constants.dart';
+import 'package:wordle_vs/utils/duration_extensions.dart';
 import 'package:wordle_vs/utils/snackbar.dart';
 
 class GameScreen extends StatefulWidget {
   GameScreen({
     super.key,
-    required this.duration,
-    String? answer,
+    required this.settings,
   }) {
-    final random = Random();
-    final randomAnswer =
-        possibleValidGuesses[random.nextInt(possibleValidWords.length)]
-            .toUpperCase();
-    final finalAnswer = answer ?? randomAnswer;
+    // final random = Random();
+    // final randomAnswer =
+    //     possibleValidGuesses[random.nextInt(possibleValidWords.length)]
+    //         .toUpperCase();
+    final finalAnswer = settings.map(
+      onePlayer: (onePlayer) => onePlayer.answer,
+      twoPlayer: (twoPlayer) => twoPlayer.player1Answer,
+    );
 
     print('answer is $finalAnswer');
-    wordlee = Wordlee(answer: finalAnswer);
+    wordlee = WordleeGame(answer: finalAnswer);
   }
 
-  final Duration duration;
-  late final Wordlee wordlee;
+  late final WordleeSettings settings;
+  late final WordleeGame wordlee;
 
   @override
   State<GameScreen> createState() => _GameScreenState();
@@ -42,11 +48,18 @@ class _GameScreenState extends State<GameScreen>
     duration: confettiAnimationDuration,
   );
 
+  Duration get duration {
+    return widget.settings.map(
+      onePlayer: (one) => one.time.duration,
+      twoPlayer: (two) => two.time.duration,
+    );
+  }
+
   @override
   void initState() {
     super.initState();
     controller = AnimationController(
-      duration: widget.duration,
+      duration: duration,
       vsync: this,
     );
     controller.addListener(_updateState);
@@ -63,9 +76,9 @@ class _GameScreenState extends State<GameScreen>
 
   void _onComplete(AnimationStatus status) {
     if (status == AnimationStatus.completed) {
-      if (widget.wordlee.state == GameState.inProgress) {
-        widget.wordlee.failGame();
-        _showEndGameScreen();
+      if (widget.wordlee.state is GameStateInProgress) {
+        final result = widget.wordlee.failGame(currentTime);
+        _showEndGameScreen(result);
       }
     }
   }
@@ -77,16 +90,27 @@ class _GameScreenState extends State<GameScreen>
     super.dispose();
   }
 
-  _showEndGameScreen() {
-    if (widget.wordlee.state == GameState.succeeded) {
+  Duration get currentTime {
+    return Duration(seconds: (controller.value * duration.inSeconds).floor());
+  }
+
+  _showEndGameScreen(WordleeResult result) {
+    if (widget.wordlee.state is GameStateSuccess) {
       confettiController.play();
     }
     showDialog(
       context: context,
       builder: (ctx) {
-        return Dialog(
-          backgroundColor: Colors.white,
-          child: Text('You Win!'),
+        return widget.settings.map(
+          onePlayer: (one) => ResultsDialog1P(
+            settings: one,
+            result: result,
+          ),
+          twoPlayer: (two) => ResultsDialog2P(
+            settings: two,
+            player1Result: result,
+            player2Result: result,
+          ),
         );
       },
     );
@@ -104,7 +128,6 @@ class _GameScreenState extends State<GameScreen>
                 Navigator.pop(context);
               },
             ),
-            backgroundColor: Colors.transparent,
           ),
           body:
               isLoading ? _buildLoadingIndicator(context) : _buildBody(context),
@@ -168,8 +191,11 @@ class _GameScreenState extends State<GameScreen>
                 isLastLine: i == maxAttempts - 1,
                 onStartAnimation: () {},
                 onFinishAnimation: () {
-                  if (widget.wordlee.state == GameState.succeeded) {
-                    confettiController.play();
+                  final state = widget.wordlee.state;
+                  if (state is GameStateSuccess) {
+                    _showEndGameScreen(state.result);
+                  } else if (state is GameStateFailure) {
+                    _showEndGameScreen(state.result);
                   }
                 },
               ),
@@ -180,22 +206,10 @@ class _GameScreenState extends State<GameScreen>
   }
 
   Widget _buildTimer(BuildContext context) {
-    var text = '';
-    if (widget.wordlee.isInProgress) {
-      final durationInSeconds = widget.duration.inSeconds;
+    final durationInSeconds = duration.inSeconds;
+    final remainingTime = (1 - controller.value) * durationInSeconds;
+    final text = Duration(seconds: remainingTime.floor()).toMSFormat();
 
-      final remainingTime = (1 - controller.value) * durationInSeconds;
-
-      final remainingMinutes = (remainingTime / 60).floor();
-      final remainingSeconds =
-          ((remainingTime - remainingMinutes * 60)).floor();
-      text =
-          '${remainingMinutes < 10 ? "0" : ""}$remainingMinutes : ${remainingSeconds < 10 ? "0" : ""}$remainingSeconds';
-    } else {
-      text = widget.wordlee.state == GameState.succeeded
-          ? 'You WON!'
-          : 'Answer was ${widget.wordlee.answer.toUpperCase()}';
-    }
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -203,7 +217,7 @@ class _GameScreenState extends State<GameScreen>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ColoredProgressBar(value: 1 - controller.value),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               text,
               style: Theme.of(context).textTheme.titleLarge,
@@ -267,7 +281,7 @@ class _GameScreenState extends State<GameScreen>
                           if (error != null) {
                             topSnackbar('Error: $error');
                           } else {
-                            widget.wordlee.submitWord();
+                            widget.wordlee.submitWord(currentTime);
                             setState(() {});
                           }
                         },

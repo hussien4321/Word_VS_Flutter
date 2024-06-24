@@ -16,13 +16,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.grey,
-          background: Colors.grey.shade100,
+          surface: Colors.grey.shade100,
           brightness: Brightness.light,
         ),
+        scaffoldBackgroundColor: Colors.grey.shade100,
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: const MenuScreen(),
+      home: MenuScreen(),
     );
   }
 }

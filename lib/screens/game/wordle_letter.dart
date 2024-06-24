@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:wordle_vs/model/guess.dart';
+import 'package:wordle_vs/model/game_logic/guess.dart';
 import 'package:wordle_vs/utils/constants.dart';
 import 'package:wordle_vs/utils/string_extensions.dart';
 

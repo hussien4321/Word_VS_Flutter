@@ -1,9 +1,13 @@
-import 'package:wordle_vs/model/guess.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:wordle_vs/model/game_data/wordlee_config.dart';
+import 'package:wordle_vs/model/game_logic/guess.dart';
 import 'package:wordle_vs/utils/constants.dart';
 import 'package:wordle_vs/utils/string_extensions.dart';
 
-class Wordlee {
-  Wordlee({
+part 'wordlee_game.freezed.dart';
+
+class WordleeGame {
+  WordleeGame({
     required this.answer,
   }) : assert(answer.length == maxWordLength) {
     final words = <String>[];
@@ -15,11 +19,11 @@ class Wordlee {
 
   final String answer;
   int _currentIndex = 0;
-  GameState state = GameState.inProgress;
+  GameState state = GameState.inProgress();
   late List<String> _words;
   final List<Guess> _guesses = [];
 
-  bool get isInProgress => state == GameState.inProgress;
+  bool get isInProgress => state is GameStateInProgress;
 
   List<Guess> get guesses => _guesses;
 
@@ -51,20 +55,25 @@ class Wordlee {
     return null;
   }
 
-  void submitWord() {
+  WordleeResult? submitWord(Duration time) {
     if (_guesses.length < maxAttempts && _currentWord.length == maxWordLength) {
       final guess = Guess(answer: answer, word: _currentWord);
       _guesses.add(guess);
       if (guess.isCorrect) {
-        state = GameState.succeeded;
+        final result = loadResult(time);
+        state = GameState.success(result: result);
+        return result;
       } else {
         if (_currentIndex + 1 < maxAttempts) {
           _currentIndex++;
         } else {
-          state = GameState.failed;
+          final result = loadResult(time);
+          state = GameState.failure(result: result);
+          return result;
         }
       }
     }
+    return null;
   }
 
   clearWord() {
@@ -98,13 +107,33 @@ class Wordlee {
     return !hasAnyIncorrectGuess;
   }
 
-  void failGame() {
-    state = GameState.failed;
+  WordleeResult failGame(Duration time) {
+    final result = loadResult(time);
+    state = GameState.failure(
+      result: loadResult(time),
+    );
+    return result;
+  }
+
+  WordleeResult loadResult(Duration time) {
+    return WordleeResult(
+      timeInSeconds: time.inSeconds,
+      attempts: _guesses.length,
+      isCorrect: _guesses.any((guess) => guess.isCorrect),
+      finalAnswer: _words.where((word) => word.length == 5).lastOrNull,
+    );
   }
 }
 
-enum GameState {
-  inProgress,
-  failed,
-  succeeded;
+@freezed
+sealed class GameState with _$GameState {
+  factory GameState.inProgress() = GameStateInProgress;
+
+  factory GameState.failure({
+    required WordleeResult result,
+  }) = GameStateFailure;
+
+  factory GameState.success({
+    required WordleeResult result,
+  }) = GameStateSuccess;
 }

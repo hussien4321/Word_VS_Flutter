@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:wordle_vs/model/guess.dart';
-import 'package:wordle_vs/model/wordlee.dart';
+import 'package:wordle_vs/model/game_logic/guess.dart';
+import 'package:wordle_vs/model/game_logic/wordlee_game.dart';
 import 'package:wordle_vs/screens/game/wordle_letter.dart';
 import 'package:wordle_vs/utils/constants.dart';
 
@@ -19,7 +19,7 @@ class WordleLine extends StatefulWidget {
     assert(text.length <= maxWordLength);
   }
 
-  final Wordlee wordlee;
+  final WordleeGame wordlee;
   late final String text;
   late final Guess? guess;
   final bool isLastLine;
