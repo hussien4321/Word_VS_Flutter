@@ -4,14 +4,14 @@ import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:wordle_vs/model/game_data/wordlee_config.dart';
 import 'package:wordle_vs/model/game_logic/wordlee_game.dart';
-import 'package:wordle_vs/screens/game/colored_progress_bar.dart';
-import 'package:wordle_vs/screens/game/keyboard_key.dart';
-import 'package:wordle_vs/screens/game/wordle_line.dart';
-import 'package:wordle_vs/screens/menu/results_dialog_1p.dart';
-import 'package:wordle_vs/screens/menu/results_dialog_2p.dart';
 import 'package:wordle_vs/utils/constants.dart';
 import 'package:wordle_vs/utils/duration_extensions.dart';
 import 'package:wordle_vs/utils/snackbar.dart';
+import 'package:wordle_vs/views/screens/game/colored_progress_bar.dart';
+import 'package:wordle_vs/views/screens/game/keyboard_key.dart';
+import 'package:wordle_vs/views/screens/game/results_dialog_1p.dart';
+import 'package:wordle_vs/views/screens/game/results_dialog_2p.dart';
+import 'package:wordle_vs/views/screens/game/wordle_line.dart';
 
 class GameScreen extends StatefulWidget {
   GameScreen({

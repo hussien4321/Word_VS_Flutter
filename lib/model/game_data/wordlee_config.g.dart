@@ -93,8 +93,10 @@ const _$WordleeTimeEnumMap = {
 _$WordleeSettings2PImpl _$$WordleeSettings2PImplFromJson(
         Map<String, dynamic> json) =>
     _$WordleeSettings2PImpl(
+      id: json['id'] as String,
       isHost: json['isHost'] as bool,
       time: $enumDecode(_$WordleeTimeEnumMap, json['time']),
+      hasPlayer2Joined: json['hasPlayer2Joined'] as bool,
       player1Answer: json['player1Answer'] as String,
       player2Answer: json['player2Answer'] as String,
       $type: json['runtimeType'] as String?,
@@ -103,8 +105,10 @@ _$WordleeSettings2PImpl _$$WordleeSettings2PImplFromJson(
 Map<String, dynamic> _$$WordleeSettings2PImplToJson(
         _$WordleeSettings2PImpl instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'isHost': instance.isHost,
       'time': _$WordleeTimeEnumMap[instance.time]!,
+      'hasPlayer2Joined': instance.hasPlayer2Joined,
       'player1Answer': instance.player1Answer,
       'player2Answer': instance.player2Answer,
       'runtimeType': instance.$type,

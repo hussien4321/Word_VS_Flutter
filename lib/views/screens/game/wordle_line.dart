@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:wordle_vs/model/game_logic/guess.dart';
 import 'package:wordle_vs/model/game_logic/wordlee_game.dart';
-import 'package:wordle_vs/screens/game/wordle_letter.dart';
 import 'package:wordle_vs/utils/constants.dart';
+import 'package:wordle_vs/views/screens/game/wordle_letter.dart';
 
 class WordleLine extends StatefulWidget {
   WordleLine({

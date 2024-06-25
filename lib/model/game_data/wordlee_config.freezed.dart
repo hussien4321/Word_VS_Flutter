@@ -743,24 +743,24 @@ mixin _$WordleeSettings {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(WordleeTime time, String answer) onePlayer,
-    required TResult Function(bool isHost, WordleeTime time,
-            String player1Answer, String player2Answer)
+    required TResult Function(String id, bool isHost, WordleeTime time,
+            bool hasPlayer2Joined, String player1Answer, String player2Answer)
         twoPlayer,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(WordleeTime time, String answer)? onePlayer,
-    TResult? Function(bool isHost, WordleeTime time, String player1Answer,
-            String player2Answer)?
+    TResult? Function(String id, bool isHost, WordleeTime time,
+            bool hasPlayer2Joined, String player1Answer, String player2Answer)?
         twoPlayer,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(WordleeTime time, String answer)? onePlayer,
-    TResult Function(bool isHost, WordleeTime time, String player1Answer,
-            String player2Answer)?
+    TResult Function(String id, bool isHost, WordleeTime time,
+            bool hasPlayer2Joined, String player1Answer, String player2Answer)?
         twoPlayer,
     required TResult orElse(),
   }) =>
@@ -908,8 +908,8 @@ class _$WordleeSettings1PImpl implements WordleeSettings1P {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(WordleeTime time, String answer) onePlayer,
-    required TResult Function(bool isHost, WordleeTime time,
-            String player1Answer, String player2Answer)
+    required TResult Function(String id, bool isHost, WordleeTime time,
+            bool hasPlayer2Joined, String player1Answer, String player2Answer)
         twoPlayer,
   }) {
     return onePlayer(time, answer);
@@ -919,8 +919,8 @@ class _$WordleeSettings1PImpl implements WordleeSettings1P {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(WordleeTime time, String answer)? onePlayer,
-    TResult? Function(bool isHost, WordleeTime time, String player1Answer,
-            String player2Answer)?
+    TResult? Function(String id, bool isHost, WordleeTime time,
+            bool hasPlayer2Joined, String player1Answer, String player2Answer)?
         twoPlayer,
   }) {
     return onePlayer?.call(time, answer);
@@ -930,8 +930,8 @@ class _$WordleeSettings1PImpl implements WordleeSettings1P {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(WordleeTime time, String answer)? onePlayer,
-    TResult Function(bool isHost, WordleeTime time, String player1Answer,
-            String player2Answer)?
+    TResult Function(String id, bool isHost, WordleeTime time,
+            bool hasPlayer2Joined, String player1Answer, String player2Answer)?
         twoPlayer,
     required TResult orElse(),
   }) {
@@ -1006,8 +1006,10 @@ abstract class _$$WordleeSettings2PImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {bool isHost,
+      {String id,
+      bool isHost,
       WordleeTime time,
+      bool hasPlayer2Joined,
       String player1Answer,
       String player2Answer});
 }
@@ -1023,12 +1025,18 @@ class __$$WordleeSettings2PImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? isHost = null,
     Object? time = null,
+    Object? hasPlayer2Joined = null,
     Object? player1Answer = null,
     Object? player2Answer = null,
   }) {
     return _then(_$WordleeSettings2PImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
       isHost: null == isHost
           ? _value.isHost
           : isHost // ignore: cast_nullable_to_non_nullable
@@ -1037,6 +1045,10 @@ class __$$WordleeSettings2PImplCopyWithImpl<$Res>
           ? _value.time
           : time // ignore: cast_nullable_to_non_nullable
               as WordleeTime,
+      hasPlayer2Joined: null == hasPlayer2Joined
+          ? _value.hasPlayer2Joined
+          : hasPlayer2Joined // ignore: cast_nullable_to_non_nullable
+              as bool,
       player1Answer: null == player1Answer
           ? _value.player1Answer
           : player1Answer // ignore: cast_nullable_to_non_nullable
@@ -1053,8 +1065,10 @@ class __$$WordleeSettings2PImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$WordleeSettings2PImpl implements WordleeSettings2P {
   _$WordleeSettings2PImpl(
-      {required this.isHost,
+      {required this.id,
+      required this.isHost,
       required this.time,
+      required this.hasPlayer2Joined,
       required this.player1Answer,
       required this.player2Answer,
       final String? $type})
@@ -1064,9 +1078,13 @@ class _$WordleeSettings2PImpl implements WordleeSettings2P {
       _$$WordleeSettings2PImplFromJson(json);
 
   @override
+  final String id;
+  @override
   final bool isHost;
   @override
   final WordleeTime time;
+  @override
+  final bool hasPlayer2Joined;
   @override
   final String player1Answer;
   @override
@@ -1077,7 +1095,7 @@ class _$WordleeSettings2PImpl implements WordleeSettings2P {
 
   @override
   String toString() {
-    return 'WordleeSettings.twoPlayer(isHost: $isHost, time: $time, player1Answer: $player1Answer, player2Answer: $player2Answer)';
+    return 'WordleeSettings.twoPlayer(id: $id, isHost: $isHost, time: $time, hasPlayer2Joined: $hasPlayer2Joined, player1Answer: $player1Answer, player2Answer: $player2Answer)';
   }
 
   @override
@@ -1085,8 +1103,11 @@ class _$WordleeSettings2PImpl implements WordleeSettings2P {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$WordleeSettings2PImpl &&
+            (identical(other.id, id) || other.id == id) &&
             (identical(other.isHost, isHost) || other.isHost == isHost) &&
             (identical(other.time, time) || other.time == time) &&
+            (identical(other.hasPlayer2Joined, hasPlayer2Joined) ||
+                other.hasPlayer2Joined == hasPlayer2Joined) &&
             (identical(other.player1Answer, player1Answer) ||
                 other.player1Answer == player1Answer) &&
             (identical(other.player2Answer, player2Answer) ||
@@ -1095,8 +1116,8 @@ class _$WordleeSettings2PImpl implements WordleeSettings2P {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, isHost, time, player1Answer, player2Answer);
+  int get hashCode => Object.hash(runtimeType, id, isHost, time,
+      hasPlayer2Joined, player1Answer, player2Answer);
 
   @JsonKey(ignore: true)
   @override
@@ -1109,35 +1130,38 @@ class _$WordleeSettings2PImpl implements WordleeSettings2P {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(WordleeTime time, String answer) onePlayer,
-    required TResult Function(bool isHost, WordleeTime time,
-            String player1Answer, String player2Answer)
+    required TResult Function(String id, bool isHost, WordleeTime time,
+            bool hasPlayer2Joined, String player1Answer, String player2Answer)
         twoPlayer,
   }) {
-    return twoPlayer(isHost, time, player1Answer, player2Answer);
+    return twoPlayer(
+        id, isHost, time, hasPlayer2Joined, player1Answer, player2Answer);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(WordleeTime time, String answer)? onePlayer,
-    TResult? Function(bool isHost, WordleeTime time, String player1Answer,
-            String player2Answer)?
+    TResult? Function(String id, bool isHost, WordleeTime time,
+            bool hasPlayer2Joined, String player1Answer, String player2Answer)?
         twoPlayer,
   }) {
-    return twoPlayer?.call(isHost, time, player1Answer, player2Answer);
+    return twoPlayer?.call(
+        id, isHost, time, hasPlayer2Joined, player1Answer, player2Answer);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(WordleeTime time, String answer)? onePlayer,
-    TResult Function(bool isHost, WordleeTime time, String player1Answer,
-            String player2Answer)?
+    TResult Function(String id, bool isHost, WordleeTime time,
+            bool hasPlayer2Joined, String player1Answer, String player2Answer)?
         twoPlayer,
     required TResult orElse(),
   }) {
     if (twoPlayer != null) {
-      return twoPlayer(isHost, time, player1Answer, player2Answer);
+      return twoPlayer(
+          id, isHost, time, hasPlayer2Joined, player1Answer, player2Answer);
     }
     return orElse();
   }
@@ -1183,17 +1207,21 @@ class _$WordleeSettings2PImpl implements WordleeSettings2P {
 
 abstract class WordleeSettings2P implements WordleeSettings {
   factory WordleeSettings2P(
-      {required final bool isHost,
+      {required final String id,
+      required final bool isHost,
       required final WordleeTime time,
+      required final bool hasPlayer2Joined,
       required final String player1Answer,
       required final String player2Answer}) = _$WordleeSettings2PImpl;
 
   factory WordleeSettings2P.fromJson(Map<String, dynamic> json) =
       _$WordleeSettings2PImpl.fromJson;
 
+  String get id;
   bool get isHost;
   @override
   WordleeTime get time;
+  bool get hasPlayer2Joined;
   String get player1Answer;
   String get player2Answer;
   @override

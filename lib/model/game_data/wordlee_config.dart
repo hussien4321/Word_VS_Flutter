@@ -42,8 +42,10 @@ sealed class WordleeSettings with _$WordleeSettings {
   }) = WordleeSettings1P;
 
   factory WordleeSettings.twoPlayer({
+    required String id,
     required bool isHost,
     required WordleeTime time,
+    required bool hasPlayer2Joined,
     required String player1Answer,
     required String player2Answer,
   }) = WordleeSettings2P;
@@ -53,14 +55,24 @@ sealed class WordleeSettings with _$WordleeSettings {
 }
 
 @JsonEnum()
-enum WordleeTime { oneMin, threeMin, fiveMin }
+enum WordleeTime {
+  oneMin,
+  threeMin,
+  fiveMin;
 
-extension WordleeTimeExt on WordleeTime {
   Duration get duration {
     return switch (this) {
       WordleeTime.oneMin => const Duration(minutes: 1),
       WordleeTime.threeMin => const Duration(minutes: 3),
       WordleeTime.fiveMin => const Duration(minutes: 5),
+    };
+  }
+
+  String get label {
+    return switch (this) {
+      WordleeTime.oneMin => '1 min',
+      WordleeTime.threeMin => '3 min',
+      WordleeTime.fiveMin => '5 min',
     };
   }
 }

@@ -1,29 +1,23 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
-import 'package:wordle_vs/screens/menu/menu_screen.dart';
+import 'package:wordle_vs/data/repositories_impl/game_lobby_repository_impl.dart';
+import 'package:wordle_vs/firebase_options.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+import 'app.dart';
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-  @override
-  Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'WordlVS',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.grey,
-          surface: Colors.grey.shade100,
-          brightness: Brightness.light,
-        ),
-        scaffoldBackgroundColor: Colors.grey.shade100,
-        useMaterial3: true,
-      ),
-      debugShowCheckedModeBanner: false,
-      home: MenuScreen(),
-    );
-  }
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  final db = FirebaseFirestore.instance;
+  final gameLobbyRepository = GameLobbyRepositoryImpl(db: db);
+
+  runApp(
+    MyApp(
+      gameLobbyRepository: gameLobbyRepository,
+    ),
+  );
 }

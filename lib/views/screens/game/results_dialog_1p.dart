@@ -58,7 +58,6 @@ class ResultsDialog1P extends StatelessWidget {
   Widget _buildTitle(BuildContext context) {
     final textTheme = context.textTheme;
 
-    print('----- is correct ${result.isCorrect}');
     final message = switch (result.isCorrect) {
       true => "You WON",
       false => "You Lost",
@@ -73,28 +72,6 @@ class ResultsDialog1P extends StatelessWidget {
       style: textTheme.titleLarge?.copyWith(
         // fontWeight: FontWeight.bold,
         color: messageColor,
-      ),
-    );
-  }
-
-  Widget _buildShowAnswer(
-    BuildContext context, {
-    required String answer,
-  }) {
-    return RichText(
-      text: TextSpan(
-        children: [
-          const TextSpan(
-            text: 'Answer: ',
-          ),
-          TextSpan(
-            text: answer,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-          ),
-        ],
-        style: Theme.of(context).textTheme.bodyMedium,
       ),
     );
   }
