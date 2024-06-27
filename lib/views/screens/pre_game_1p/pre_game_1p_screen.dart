@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wordle_vs/model/game_data/wordlee_config.dart';
+import 'package:wordle_vs/views/screens/game/game_screen_1p.dart';
 import 'package:wordle_vs/views/widgets/pd.row.dart';
 
 import '../../../utils/functions.dart';
-import '../game/game_screen.dart';
 
 class PreGame1pScreen extends StatefulWidget {
   const PreGame1pScreen({super.key});
@@ -59,7 +59,7 @@ class _PreGame1pScreenState extends State<PreGame1pScreen> {
             FilledButton(
               onPressed: () {
                 Get.off(
-                  () => GameScreen(
+                  () => GameScreen1p(
                     settings: WordleeSettings1P(
                       answer: generateRandomWord(),
                       time: selectedTime,

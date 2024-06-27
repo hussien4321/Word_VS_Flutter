@@ -49,9 +49,15 @@ class ResultsDialog2P extends StatelessWidget {
             ),
             _buildResultsRow(
               context,
-              left: player1Result.finalGuess ?? "-----",
+              left: (player1Result.finalGuess == settings.player1Answer
+                      ? "✓"
+                      : player1Result.finalGuess) ??
+                  "-----",
               middle: 'Final guess',
-              right: player2Result.finalGuess ?? "-----",
+              right: (player2Result.finalGuess == settings.player2Answer
+                      ? "✓"
+                      : player2Result.finalGuess) ??
+                  "-----",
             ),
             _buildResultsRow(
               context,

@@ -16,11 +16,15 @@ class GameScreenBase extends StatefulWidget {
     super.key,
     required this.wordlee,
     required this.settings,
+    required this.confettiController,
     required this.onResult,
+    required this.onShowResults,
   });
 
   final WordleeGame wordlee;
   final WordleeSettings settings;
+  final ConfettiController confettiController;
+  final VoidCallback onShowResults;
   final ValueChanged<WordleeResult> onResult;
 
   @override
@@ -29,13 +33,9 @@ class GameScreenBase extends StatefulWidget {
 
 class _GameScreenBaseState extends State<GameScreenBase>
     with SingleTickerProviderStateMixin {
-  bool isLoading = false;
-
   late AnimationController controller;
 
-  final ConfettiController confettiController = ConfettiController(
-    duration: confettiAnimationDuration,
-  );
+  bool isFinishedAnimating = false;
 
   WordleeSettings get settings {
     return widget.settings;
@@ -71,7 +71,7 @@ class _GameScreenBaseState extends State<GameScreenBase>
     if (status == AnimationStatus.completed) {
       if (widget.wordlee.state is GameStateInProgress) {
         final result = widget.wordlee.failGame(currentTime);
-        widget.onResult(result);
+        _onResult(result);
       }
     }
   }
@@ -81,6 +81,13 @@ class _GameScreenBaseState extends State<GameScreenBase>
     controller.removeListener(_updateState);
     controller.dispose();
     super.dispose();
+  }
+
+  _onResult(WordleeResult result) {
+    widget.onResult(result);
+    setState(() {
+      isFinishedAnimating = true;
+    });
   }
 
   Duration get currentTime {
@@ -100,13 +107,12 @@ class _GameScreenBaseState extends State<GameScreenBase>
               },
             ),
           ),
-          body:
-              isLoading ? _buildLoadingIndicator(context) : _buildBody(context),
+          body: _buildBody(context),
         ),
         Align(
           alignment: Alignment.topCenter,
           child: ConfettiWidget(
-            confettiController: confettiController,
+            confettiController: widget.confettiController,
             blastDirection: pi / 2,
             shouldLoop: false,
             gravity: 0.1,
@@ -116,22 +122,6 @@ class _GameScreenBaseState extends State<GameScreenBase>
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildLoadingIndicator(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const CircularProgressIndicator(),
-          const SizedBox(height: 16),
-          Text(
-            'Loading word...',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-        ],
-      ),
     );
   }
 
@@ -164,9 +154,9 @@ class _GameScreenBaseState extends State<GameScreenBase>
                 onFinishAnimation: () {
                   final state = widget.wordlee.state;
                   if (state is GameStateSuccess) {
-                    widget.onResult(state.result);
+                    _onResult(state.result);
                   } else if (state is GameStateFailure) {
-                    widget.onResult(state.result);
+                    _onResult(state.result);
                   }
                 },
               ),
@@ -180,6 +170,15 @@ class _GameScreenBaseState extends State<GameScreenBase>
     final durationInSeconds = duration.inSeconds;
     final remainingTime = (1 - controller.value) * durationInSeconds;
     final text = Duration(seconds: remainingTime.floor()).toMSFormat();
+
+    if (isFinishedAnimating) {
+      return Center(
+        child: FilledButton(
+          onPressed: widget.onShowResults,
+          child: const Text('Show results'),
+        ),
+      );
+    }
 
     return Center(
       child: Padding(

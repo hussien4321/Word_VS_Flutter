@@ -10,6 +10,8 @@ class WordleeGame {
   WordleeGame({
     required this.answer,
   }) : assert(answer.length == maxWordLength) {
+    print('---- Creating game (answer: $answer)');
+
     final words = <String>[];
     for (int i = 0; i < maxAttempts; i++) {
       words.add("");

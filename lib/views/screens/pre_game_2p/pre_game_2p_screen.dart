@@ -67,13 +67,13 @@ class _PreGame2pScreen extends StatelessWidget with PreGame2pMixin {
           if (state is PreGame2pCreatedLobbyState) {
             if (state.settings.hasStarted) {
               Get.off(
-                () => Game2pScreen(settings: state.settings),
+                () => GameScreen2p(settings: state.settings),
               );
             }
           } else if (state is PreGame2pJoinedLobbyState) {
             if (state.settings.hasStarted) {
               Get.off(
-                () => Game2pScreen(settings: state.settings),
+                () => GameScreen2p(settings: state.settings),
               );
             }
           }
