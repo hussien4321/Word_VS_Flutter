@@ -6,6 +6,7 @@ import 'package:wordle_vs/views/screens/game/game_screen_2p.dart';
 import 'package:wordle_vs/views/screens/pre_game_2p/pre_game_2p_mixin.dart';
 import 'package:wordle_vs/views/screens/pre_game_2p/pre_game_2p_views.dart';
 import 'package:wordle_vs/views/widgets/circular_button.dart';
+import 'package:wordle_vs/views/widgets/yes_no_dialog.dart';
 
 class PreGame2pScreen extends StatelessWidget {
   const PreGame2pScreen({
@@ -38,60 +39,82 @@ class _PreGame2pScreen extends StatelessWidget with PreGame2pMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        title: Text(
-          bloc.state.map(
-            init: (_) => 'Select Mode',
-            newCreateLobby: (_) => 'Create Game',
-            createdLobby: (_) => 'Create Game',
-            newJoinLobby: (_) => 'Join Game',
-            joinedLobby: (_) => 'Join Game',
+    return PopScope(
+      canPop: (bloc.state is PreGame2pInitState),
+      onPopInvoked: (canPop) {
+        if (!canPop) {
+          if (bloc.state is PreGame2pNewJoinLobbyState ||
+              bloc.state is PreGame2pNewCreateLobbyState) {
+            bloc.add(PreGame2pEvent.popToStart());
+          } else if (bloc.state is PreGame2pCreatedLobbyState ||
+              bloc.state is PreGame2pJoinedLobbyState) {
+            showYesNoDialog(
+              context,
+              title: 'Disconnect',
+              message: 'Are you sure you want to leave this lobby?',
+              onYes: () {
+                bloc.add(PreGame2pEvent.disconnect());
+              },
+            );
+            // if yes
+          }
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: true,
+          title: Text(
+            bloc.state.map(
+              init: (_) => 'Select Mode',
+              newCreateLobby: (_) => 'Create Game',
+              createdLobby: (_) => 'Create Game',
+              newJoinLobby: (_) => 'Join Game',
+              joinedLobby: (_) => 'Join Game',
+            ),
           ),
+          centerTitle: true,
         ),
-        centerTitle: true,
-      ),
-      body: BlocConsumer<PreGame2pBloc, PreGame2pState>(
-        listenWhen: (before, after) {
-          if (before is PreGame2pJoinedLobbyState &&
-              after is PreGame2pJoinedLobbyState) {
-            return !before.settings.hasStarted && after.settings.hasStarted;
-          } else if (before is PreGame2pCreatedLobbyState &&
-              after is PreGame2pCreatedLobbyState) {
-            return !before.settings.hasStarted && after.settings.hasStarted;
-          }
-          return false;
-        },
-        listener: (BuildContext context, PreGame2pState state) {
-          if (state is PreGame2pCreatedLobbyState) {
-            if (state.settings.hasStarted) {
-              Get.off(
-                () => GameScreen2p(settings: state.settings),
-              );
+        body: BlocConsumer<PreGame2pBloc, PreGame2pState>(
+          listenWhen: (before, after) {
+            if (before is PreGame2pJoinedLobbyState &&
+                after is PreGame2pJoinedLobbyState) {
+              return !before.settings.hasStarted && after.settings.hasStarted;
+            } else if (before is PreGame2pCreatedLobbyState &&
+                after is PreGame2pCreatedLobbyState) {
+              return !before.settings.hasStarted && after.settings.hasStarted;
             }
-          } else if (state is PreGame2pJoinedLobbyState) {
-            if (state.settings.hasStarted) {
-              Get.off(
-                () => GameScreen2p(settings: state.settings),
-              );
+            return false;
+          },
+          listener: (BuildContext context, PreGame2pState state) {
+            if (state is PreGame2pCreatedLobbyState) {
+              if (state.settings.hasStarted) {
+                Get.off(
+                  () => GameScreen2p(settings: state.settings),
+                );
+              }
+            } else if (state is PreGame2pJoinedLobbyState) {
+              if (state.settings.hasStarted) {
+                Get.off(
+                  () => GameScreen2p(settings: state.settings),
+                );
+              }
             }
-          }
-        },
-        builder: (ctx, snap) {
-          final state = snap;
-          if (state is PreGame2pNewCreateLobbyState) {
-            return NewCreateLobbyView(bloc: bloc, state: state);
-          } else if (state is PreGame2pCreatedLobbyState) {
-            return CreatedLobbyView(bloc: bloc, state: state);
-          } else if (state is PreGame2pNewJoinLobbyState) {
-            return NewJoinLobbyView(bloc: bloc, state: state);
-          } else if (state is PreGame2pJoinedLobbyState) {
-            return JoinedLobbyView(bloc: bloc, state: state);
-          } else {
-            return _buildModeSelector();
-          }
-        },
+          },
+          builder: (ctx, snap) {
+            final state = snap;
+            if (state is PreGame2pNewCreateLobbyState) {
+              return NewCreateLobbyView(bloc: bloc, state: state);
+            } else if (state is PreGame2pCreatedLobbyState) {
+              return CreatedLobbyView(bloc: bloc, state: state);
+            } else if (state is PreGame2pNewJoinLobbyState) {
+              return NewJoinLobbyView(bloc: bloc, state: state);
+            } else if (state is PreGame2pJoinedLobbyState) {
+              return JoinedLobbyView(bloc: bloc, state: state);
+            } else {
+              return _buildModeSelector();
+            }
+          },
+        ),
       ),
     );
   }

@@ -75,7 +75,6 @@ class ResultsDialog2P extends StatelessWidget {
 
   Widget _buildTitle(BuildContext context) {
     final textTheme = context.textTheme;
-    print('-ourcome ${settings.outcome}');
 
     final message = switch (settings.outcome) {
       WordleeGame2pResult.win => "You WON",

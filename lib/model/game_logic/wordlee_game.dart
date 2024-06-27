@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:wordle_vs/model/game_data/wordlee_config.dart';
 import 'package:wordle_vs/model/game_logic/guess.dart';
@@ -10,7 +11,9 @@ class WordleeGame {
   WordleeGame({
     required this.answer,
   }) : assert(answer.length == maxWordLength) {
-    print('---- Creating game (answer: $answer)');
+    if (kDebugMode) {
+      print('---- Creating game (answer: $answer)');
+    }
 
     final words = <String>[];
     for (int i = 0; i < maxAttempts; i++) {
