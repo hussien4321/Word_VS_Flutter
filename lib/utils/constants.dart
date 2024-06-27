@@ -1,6 +1,7 @@
 int maxWordLength = 5;
 int maxAttempts = 6;
 String alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+int maxRoomIDLength = 4;
 
 final keyboardLine1 = ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'];
 final keyboardLine2 = ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'];

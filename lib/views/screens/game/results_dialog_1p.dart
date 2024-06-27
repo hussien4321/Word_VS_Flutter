@@ -40,7 +40,7 @@ class ResultsDialog1P extends StatelessWidget {
             _buildResultsRow(
               context,
               title: 'Final guess',
-              value: result.finalAnswer ?? "-----",
+              value: result.finalGuess ?? "-----",
             ),
             _buildResultsRow(
               context,

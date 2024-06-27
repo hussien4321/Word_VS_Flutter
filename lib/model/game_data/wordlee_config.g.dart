@@ -57,7 +57,7 @@ _$WordleeResultImpl _$$WordleeResultImplFromJson(Map<String, dynamic> json) =>
       timeInSeconds: (json['timeInSeconds'] as num).toInt(),
       attempts: (json['attempts'] as num).toInt(),
       isCorrect: json['isCorrect'] as bool,
-      finalAnswer: json['finalAnswer'] as String?,
+      finalGuess: json['finalGuess'] as String?,
     );
 
 Map<String, dynamic> _$$WordleeResultImplToJson(_$WordleeResultImpl instance) =>
@@ -65,7 +65,7 @@ Map<String, dynamic> _$$WordleeResultImplToJson(_$WordleeResultImpl instance) =>
       'timeInSeconds': instance.timeInSeconds,
       'attempts': instance.attempts,
       'isCorrect': instance.isCorrect,
-      'finalAnswer': instance.finalAnswer,
+      'finalGuess': instance.finalGuess,
     };
 
 _$WordleeSettings1PImpl _$$WordleeSettings1PImplFromJson(
@@ -95,10 +95,19 @@ _$WordleeSettings2PImpl _$$WordleeSettings2PImplFromJson(
     _$WordleeSettings2PImpl(
       id: json['id'] as String,
       isHost: json['isHost'] as bool,
+      hasStarted: json['hasStarted'] as bool,
       time: $enumDecode(_$WordleeTimeEnumMap, json['time']),
       hasPlayer2Joined: json['hasPlayer2Joined'] as bool,
       player1Answer: json['player1Answer'] as String,
       player2Answer: json['player2Answer'] as String,
+      player1Result: json['player1Result'] == null
+          ? null
+          : WordleeResult.fromJson(
+              json['player1Result'] as Map<String, dynamic>),
+      player2Result: json['player2Result'] == null
+          ? null
+          : WordleeResult.fromJson(
+              json['player2Result'] as Map<String, dynamic>),
       $type: json['runtimeType'] as String?,
     );
 
@@ -107,9 +116,12 @@ Map<String, dynamic> _$$WordleeSettings2PImplToJson(
     <String, dynamic>{
       'id': instance.id,
       'isHost': instance.isHost,
+      'hasStarted': instance.hasStarted,
       'time': _$WordleeTimeEnumMap[instance.time]!,
       'hasPlayer2Joined': instance.hasPlayer2Joined,
       'player1Answer': instance.player1Answer,
       'player2Answer': instance.player2Answer,
+      'player1Result': instance.player1Result?.toJson(),
+      'player2Result': instance.player2Result?.toJson(),
       'runtimeType': instance.$type,
     };

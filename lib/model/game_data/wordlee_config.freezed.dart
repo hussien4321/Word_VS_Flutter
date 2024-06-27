@@ -534,7 +534,7 @@ mixin _$WordleeResult {
   int get timeInSeconds => throw _privateConstructorUsedError;
   int get attempts => throw _privateConstructorUsedError;
   bool get isCorrect => throw _privateConstructorUsedError;
-  String? get finalAnswer => throw _privateConstructorUsedError;
+  String? get finalGuess => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -549,7 +549,7 @@ abstract class $WordleeResultCopyWith<$Res> {
       _$WordleeResultCopyWithImpl<$Res, WordleeResult>;
   @useResult
   $Res call(
-      {int timeInSeconds, int attempts, bool isCorrect, String? finalAnswer});
+      {int timeInSeconds, int attempts, bool isCorrect, String? finalGuess});
 }
 
 /// @nodoc
@@ -568,7 +568,7 @@ class _$WordleeResultCopyWithImpl<$Res, $Val extends WordleeResult>
     Object? timeInSeconds = null,
     Object? attempts = null,
     Object? isCorrect = null,
-    Object? finalAnswer = freezed,
+    Object? finalGuess = freezed,
   }) {
     return _then(_value.copyWith(
       timeInSeconds: null == timeInSeconds
@@ -583,9 +583,9 @@ class _$WordleeResultCopyWithImpl<$Res, $Val extends WordleeResult>
           ? _value.isCorrect
           : isCorrect // ignore: cast_nullable_to_non_nullable
               as bool,
-      finalAnswer: freezed == finalAnswer
-          ? _value.finalAnswer
-          : finalAnswer // ignore: cast_nullable_to_non_nullable
+      finalGuess: freezed == finalGuess
+          ? _value.finalGuess
+          : finalGuess // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
@@ -600,7 +600,7 @@ abstract class _$$WordleeResultImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {int timeInSeconds, int attempts, bool isCorrect, String? finalAnswer});
+      {int timeInSeconds, int attempts, bool isCorrect, String? finalGuess});
 }
 
 /// @nodoc
@@ -617,7 +617,7 @@ class __$$WordleeResultImplCopyWithImpl<$Res>
     Object? timeInSeconds = null,
     Object? attempts = null,
     Object? isCorrect = null,
-    Object? finalAnswer = freezed,
+    Object? finalGuess = freezed,
   }) {
     return _then(_$WordleeResultImpl(
       timeInSeconds: null == timeInSeconds
@@ -632,9 +632,9 @@ class __$$WordleeResultImplCopyWithImpl<$Res>
           ? _value.isCorrect
           : isCorrect // ignore: cast_nullable_to_non_nullable
               as bool,
-      finalAnswer: freezed == finalAnswer
-          ? _value.finalAnswer
-          : finalAnswer // ignore: cast_nullable_to_non_nullable
+      finalGuess: freezed == finalGuess
+          ? _value.finalGuess
+          : finalGuess // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
@@ -642,12 +642,13 @@ class __$$WordleeResultImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$WordleeResultImpl implements _WordleeResult {
+class _$WordleeResultImpl extends _WordleeResult {
   _$WordleeResultImpl(
       {required this.timeInSeconds,
       required this.attempts,
       required this.isCorrect,
-      required this.finalAnswer});
+      required this.finalGuess})
+      : super._();
 
   factory _$WordleeResultImpl.fromJson(Map<String, dynamic> json) =>
       _$$WordleeResultImplFromJson(json);
@@ -659,11 +660,11 @@ class _$WordleeResultImpl implements _WordleeResult {
   @override
   final bool isCorrect;
   @override
-  final String? finalAnswer;
+  final String? finalGuess;
 
   @override
   String toString() {
-    return 'WordleeResult(timeInSeconds: $timeInSeconds, attempts: $attempts, isCorrect: $isCorrect, finalAnswer: $finalAnswer)';
+    return 'WordleeResult(timeInSeconds: $timeInSeconds, attempts: $attempts, isCorrect: $isCorrect, finalGuess: $finalGuess)';
   }
 
   @override
@@ -677,14 +678,14 @@ class _$WordleeResultImpl implements _WordleeResult {
                 other.attempts == attempts) &&
             (identical(other.isCorrect, isCorrect) ||
                 other.isCorrect == isCorrect) &&
-            (identical(other.finalAnswer, finalAnswer) ||
-                other.finalAnswer == finalAnswer));
+            (identical(other.finalGuess, finalGuess) ||
+                other.finalGuess == finalGuess));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, timeInSeconds, attempts, isCorrect, finalAnswer);
+      Object.hash(runtimeType, timeInSeconds, attempts, isCorrect, finalGuess);
 
   @JsonKey(ignore: true)
   @override
@@ -700,12 +701,13 @@ class _$WordleeResultImpl implements _WordleeResult {
   }
 }
 
-abstract class _WordleeResult implements WordleeResult {
+abstract class _WordleeResult extends WordleeResult {
   factory _WordleeResult(
       {required final int timeInSeconds,
       required final int attempts,
       required final bool isCorrect,
-      required final String? finalAnswer}) = _$WordleeResultImpl;
+      required final String? finalGuess}) = _$WordleeResultImpl;
+  _WordleeResult._() : super._();
 
   factory _WordleeResult.fromJson(Map<String, dynamic> json) =
       _$WordleeResultImpl.fromJson;
@@ -717,7 +719,7 @@ abstract class _WordleeResult implements WordleeResult {
   @override
   bool get isCorrect;
   @override
-  String? get finalAnswer;
+  String? get finalGuess;
   @override
   @JsonKey(ignore: true)
   _$$WordleeResultImplCopyWith<_$WordleeResultImpl> get copyWith =>
@@ -743,24 +745,48 @@ mixin _$WordleeSettings {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(WordleeTime time, String answer) onePlayer,
-    required TResult Function(String id, bool isHost, WordleeTime time,
-            bool hasPlayer2Joined, String player1Answer, String player2Answer)
+    required TResult Function(
+            String id,
+            bool isHost,
+            bool hasStarted,
+            WordleeTime time,
+            bool hasPlayer2Joined,
+            String player1Answer,
+            String player2Answer,
+            WordleeResult? player1Result,
+            WordleeResult? player2Result)
         twoPlayer,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(WordleeTime time, String answer)? onePlayer,
-    TResult? Function(String id, bool isHost, WordleeTime time,
-            bool hasPlayer2Joined, String player1Answer, String player2Answer)?
+    TResult? Function(
+            String id,
+            bool isHost,
+            bool hasStarted,
+            WordleeTime time,
+            bool hasPlayer2Joined,
+            String player1Answer,
+            String player2Answer,
+            WordleeResult? player1Result,
+            WordleeResult? player2Result)?
         twoPlayer,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(WordleeTime time, String answer)? onePlayer,
-    TResult Function(String id, bool isHost, WordleeTime time,
-            bool hasPlayer2Joined, String player1Answer, String player2Answer)?
+    TResult Function(
+            String id,
+            bool isHost,
+            bool hasStarted,
+            WordleeTime time,
+            bool hasPlayer2Joined,
+            String player1Answer,
+            String player2Answer,
+            WordleeResult? player1Result,
+            WordleeResult? player2Result)?
         twoPlayer,
     required TResult orElse(),
   }) =>
@@ -863,10 +889,11 @@ class __$$WordleeSettings1PImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$WordleeSettings1PImpl implements WordleeSettings1P {
+class _$WordleeSettings1PImpl extends WordleeSettings1P {
   _$WordleeSettings1PImpl(
       {required this.time, required this.answer, final String? $type})
-      : $type = $type ?? 'onePlayer';
+      : $type = $type ?? 'onePlayer',
+        super._();
 
   factory _$WordleeSettings1PImpl.fromJson(Map<String, dynamic> json) =>
       _$$WordleeSettings1PImplFromJson(json);
@@ -908,8 +935,16 @@ class _$WordleeSettings1PImpl implements WordleeSettings1P {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(WordleeTime time, String answer) onePlayer,
-    required TResult Function(String id, bool isHost, WordleeTime time,
-            bool hasPlayer2Joined, String player1Answer, String player2Answer)
+    required TResult Function(
+            String id,
+            bool isHost,
+            bool hasStarted,
+            WordleeTime time,
+            bool hasPlayer2Joined,
+            String player1Answer,
+            String player2Answer,
+            WordleeResult? player1Result,
+            WordleeResult? player2Result)
         twoPlayer,
   }) {
     return onePlayer(time, answer);
@@ -919,8 +954,16 @@ class _$WordleeSettings1PImpl implements WordleeSettings1P {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(WordleeTime time, String answer)? onePlayer,
-    TResult? Function(String id, bool isHost, WordleeTime time,
-            bool hasPlayer2Joined, String player1Answer, String player2Answer)?
+    TResult? Function(
+            String id,
+            bool isHost,
+            bool hasStarted,
+            WordleeTime time,
+            bool hasPlayer2Joined,
+            String player1Answer,
+            String player2Answer,
+            WordleeResult? player1Result,
+            WordleeResult? player2Result)?
         twoPlayer,
   }) {
     return onePlayer?.call(time, answer);
@@ -930,8 +973,16 @@ class _$WordleeSettings1PImpl implements WordleeSettings1P {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(WordleeTime time, String answer)? onePlayer,
-    TResult Function(String id, bool isHost, WordleeTime time,
-            bool hasPlayer2Joined, String player1Answer, String player2Answer)?
+    TResult Function(
+            String id,
+            bool isHost,
+            bool hasStarted,
+            WordleeTime time,
+            bool hasPlayer2Joined,
+            String player1Answer,
+            String player2Answer,
+            WordleeResult? player1Result,
+            WordleeResult? player2Result)?
         twoPlayer,
     required TResult orElse(),
   }) {
@@ -980,10 +1031,11 @@ class _$WordleeSettings1PImpl implements WordleeSettings1P {
   }
 }
 
-abstract class WordleeSettings1P implements WordleeSettings {
+abstract class WordleeSettings1P extends WordleeSettings {
   factory WordleeSettings1P(
       {required final WordleeTime time,
       required final String answer}) = _$WordleeSettings1PImpl;
+  WordleeSettings1P._() : super._();
 
   factory WordleeSettings1P.fromJson(Map<String, dynamic> json) =
       _$WordleeSettings1PImpl.fromJson;
@@ -1008,10 +1060,16 @@ abstract class _$$WordleeSettings2PImplCopyWith<$Res>
   $Res call(
       {String id,
       bool isHost,
+      bool hasStarted,
       WordleeTime time,
       bool hasPlayer2Joined,
       String player1Answer,
-      String player2Answer});
+      String player2Answer,
+      WordleeResult? player1Result,
+      WordleeResult? player2Result});
+
+  $WordleeResultCopyWith<$Res>? get player1Result;
+  $WordleeResultCopyWith<$Res>? get player2Result;
 }
 
 /// @nodoc
@@ -1027,10 +1085,13 @@ class __$$WordleeSettings2PImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? isHost = null,
+    Object? hasStarted = null,
     Object? time = null,
     Object? hasPlayer2Joined = null,
     Object? player1Answer = null,
     Object? player2Answer = null,
+    Object? player1Result = freezed,
+    Object? player2Result = freezed,
   }) {
     return _then(_$WordleeSettings2PImpl(
       id: null == id
@@ -1040,6 +1101,10 @@ class __$$WordleeSettings2PImplCopyWithImpl<$Res>
       isHost: null == isHost
           ? _value.isHost
           : isHost // ignore: cast_nullable_to_non_nullable
+              as bool,
+      hasStarted: null == hasStarted
+          ? _value.hasStarted
+          : hasStarted // ignore: cast_nullable_to_non_nullable
               as bool,
       time: null == time
           ? _value.time
@@ -1057,22 +1122,59 @@ class __$$WordleeSettings2PImplCopyWithImpl<$Res>
           ? _value.player2Answer
           : player2Answer // ignore: cast_nullable_to_non_nullable
               as String,
+      player1Result: freezed == player1Result
+          ? _value.player1Result
+          : player1Result // ignore: cast_nullable_to_non_nullable
+              as WordleeResult?,
+      player2Result: freezed == player2Result
+          ? _value.player2Result
+          : player2Result // ignore: cast_nullable_to_non_nullable
+              as WordleeResult?,
     ));
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $WordleeResultCopyWith<$Res>? get player1Result {
+    if (_value.player1Result == null) {
+      return null;
+    }
+
+    return $WordleeResultCopyWith<$Res>(_value.player1Result!, (value) {
+      return _then(_value.copyWith(player1Result: value));
+    });
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $WordleeResultCopyWith<$Res>? get player2Result {
+    if (_value.player2Result == null) {
+      return null;
+    }
+
+    return $WordleeResultCopyWith<$Res>(_value.player2Result!, (value) {
+      return _then(_value.copyWith(player2Result: value));
+    });
   }
 }
 
 /// @nodoc
-@JsonSerializable()
-class _$WordleeSettings2PImpl implements WordleeSettings2P {
+
+@JsonSerializable(explicitToJson: true)
+class _$WordleeSettings2PImpl extends WordleeSettings2P {
   _$WordleeSettings2PImpl(
       {required this.id,
       required this.isHost,
+      required this.hasStarted,
       required this.time,
       required this.hasPlayer2Joined,
       required this.player1Answer,
       required this.player2Answer,
+      required this.player1Result,
+      required this.player2Result,
       final String? $type})
-      : $type = $type ?? 'twoPlayer';
+      : $type = $type ?? 'twoPlayer',
+        super._();
 
   factory _$WordleeSettings2PImpl.fromJson(Map<String, dynamic> json) =>
       _$$WordleeSettings2PImplFromJson(json);
@@ -1082,6 +1184,8 @@ class _$WordleeSettings2PImpl implements WordleeSettings2P {
   @override
   final bool isHost;
   @override
+  final bool hasStarted;
+  @override
   final WordleeTime time;
   @override
   final bool hasPlayer2Joined;
@@ -1089,13 +1193,17 @@ class _$WordleeSettings2PImpl implements WordleeSettings2P {
   final String player1Answer;
   @override
   final String player2Answer;
+  @override
+  final WordleeResult? player1Result;
+  @override
+  final WordleeResult? player2Result;
 
   @JsonKey(name: 'runtimeType')
   final String $type;
 
   @override
   String toString() {
-    return 'WordleeSettings.twoPlayer(id: $id, isHost: $isHost, time: $time, hasPlayer2Joined: $hasPlayer2Joined, player1Answer: $player1Answer, player2Answer: $player2Answer)';
+    return 'WordleeSettings.twoPlayer(id: $id, isHost: $isHost, hasStarted: $hasStarted, time: $time, hasPlayer2Joined: $hasPlayer2Joined, player1Answer: $player1Answer, player2Answer: $player2Answer, player1Result: $player1Result, player2Result: $player2Result)';
   }
 
   @override
@@ -1105,19 +1213,34 @@ class _$WordleeSettings2PImpl implements WordleeSettings2P {
             other is _$WordleeSettings2PImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.isHost, isHost) || other.isHost == isHost) &&
+            (identical(other.hasStarted, hasStarted) ||
+                other.hasStarted == hasStarted) &&
             (identical(other.time, time) || other.time == time) &&
             (identical(other.hasPlayer2Joined, hasPlayer2Joined) ||
                 other.hasPlayer2Joined == hasPlayer2Joined) &&
             (identical(other.player1Answer, player1Answer) ||
                 other.player1Answer == player1Answer) &&
             (identical(other.player2Answer, player2Answer) ||
-                other.player2Answer == player2Answer));
+                other.player2Answer == player2Answer) &&
+            (identical(other.player1Result, player1Result) ||
+                other.player1Result == player1Result) &&
+            (identical(other.player2Result, player2Result) ||
+                other.player2Result == player2Result));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, isHost, time,
-      hasPlayer2Joined, player1Answer, player2Answer);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      isHost,
+      hasStarted,
+      time,
+      hasPlayer2Joined,
+      player1Answer,
+      player2Answer,
+      player1Result,
+      player2Result);
 
   @JsonKey(ignore: true)
   @override
@@ -1130,38 +1253,62 @@ class _$WordleeSettings2PImpl implements WordleeSettings2P {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(WordleeTime time, String answer) onePlayer,
-    required TResult Function(String id, bool isHost, WordleeTime time,
-            bool hasPlayer2Joined, String player1Answer, String player2Answer)
+    required TResult Function(
+            String id,
+            bool isHost,
+            bool hasStarted,
+            WordleeTime time,
+            bool hasPlayer2Joined,
+            String player1Answer,
+            String player2Answer,
+            WordleeResult? player1Result,
+            WordleeResult? player2Result)
         twoPlayer,
   }) {
-    return twoPlayer(
-        id, isHost, time, hasPlayer2Joined, player1Answer, player2Answer);
+    return twoPlayer(id, isHost, hasStarted, time, hasPlayer2Joined,
+        player1Answer, player2Answer, player1Result, player2Result);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(WordleeTime time, String answer)? onePlayer,
-    TResult? Function(String id, bool isHost, WordleeTime time,
-            bool hasPlayer2Joined, String player1Answer, String player2Answer)?
+    TResult? Function(
+            String id,
+            bool isHost,
+            bool hasStarted,
+            WordleeTime time,
+            bool hasPlayer2Joined,
+            String player1Answer,
+            String player2Answer,
+            WordleeResult? player1Result,
+            WordleeResult? player2Result)?
         twoPlayer,
   }) {
-    return twoPlayer?.call(
-        id, isHost, time, hasPlayer2Joined, player1Answer, player2Answer);
+    return twoPlayer?.call(id, isHost, hasStarted, time, hasPlayer2Joined,
+        player1Answer, player2Answer, player1Result, player2Result);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(WordleeTime time, String answer)? onePlayer,
-    TResult Function(String id, bool isHost, WordleeTime time,
-            bool hasPlayer2Joined, String player1Answer, String player2Answer)?
+    TResult Function(
+            String id,
+            bool isHost,
+            bool hasStarted,
+            WordleeTime time,
+            bool hasPlayer2Joined,
+            String player1Answer,
+            String player2Answer,
+            WordleeResult? player1Result,
+            WordleeResult? player2Result)?
         twoPlayer,
     required TResult orElse(),
   }) {
     if (twoPlayer != null) {
-      return twoPlayer(
-          id, isHost, time, hasPlayer2Joined, player1Answer, player2Answer);
+      return twoPlayer(id, isHost, hasStarted, time, hasPlayer2Joined,
+          player1Answer, player2Answer, player1Result, player2Result);
     }
     return orElse();
   }
@@ -1205,25 +1352,32 @@ class _$WordleeSettings2PImpl implements WordleeSettings2P {
   }
 }
 
-abstract class WordleeSettings2P implements WordleeSettings {
+abstract class WordleeSettings2P extends WordleeSettings {
   factory WordleeSettings2P(
       {required final String id,
       required final bool isHost,
+      required final bool hasStarted,
       required final WordleeTime time,
       required final bool hasPlayer2Joined,
       required final String player1Answer,
-      required final String player2Answer}) = _$WordleeSettings2PImpl;
+      required final String player2Answer,
+      required final WordleeResult? player1Result,
+      required final WordleeResult? player2Result}) = _$WordleeSettings2PImpl;
+  WordleeSettings2P._() : super._();
 
   factory WordleeSettings2P.fromJson(Map<String, dynamic> json) =
       _$WordleeSettings2PImpl.fromJson;
 
   String get id;
   bool get isHost;
+  bool get hasStarted;
   @override
   WordleeTime get time;
   bool get hasPlayer2Joined;
   String get player1Answer;
   String get player2Answer;
+  WordleeResult? get player1Result;
+  WordleeResult? get player2Result;
   @override
   @JsonKey(ignore: true)
   _$$WordleeSettings2PImplCopyWith<_$WordleeSettings2PImpl> get copyWith =>

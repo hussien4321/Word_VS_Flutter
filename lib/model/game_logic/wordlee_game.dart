@@ -120,7 +120,7 @@ class WordleeGame {
       timeInSeconds: time.inSeconds,
       attempts: _guesses.length,
       isCorrect: _guesses.any((guess) => guess.isCorrect),
-      finalAnswer: _words.where((word) => word.length == 5).lastOrNull,
+      finalGuess: _words.where((word) => word.length == 5).lastOrNull,
     );
   }
 }

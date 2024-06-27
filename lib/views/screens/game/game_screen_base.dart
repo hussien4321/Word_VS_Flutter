@@ -9,31 +9,25 @@ import 'package:wordle_vs/utils/duration_extensions.dart';
 import 'package:wordle_vs/utils/snackbar.dart';
 import 'package:wordle_vs/views/screens/game/colored_progress_bar.dart';
 import 'package:wordle_vs/views/screens/game/keyboard_key.dart';
-import 'package:wordle_vs/views/screens/game/results_dialog_1p.dart';
-import 'package:wordle_vs/views/screens/game/results_dialog_2p.dart';
 import 'package:wordle_vs/views/screens/game/wordle_line.dart';
 
-class GameScreen extends StatefulWidget {
-  GameScreen({
+class GameScreenBase extends StatefulWidget {
+  const GameScreenBase({
     super.key,
+    required this.wordlee,
     required this.settings,
-  }) {
-    final finalAnswer = settings.map(
-      onePlayer: (onePlayer) => onePlayer.answer,
-      twoPlayer: (twoPlayer) => twoPlayer.player1Answer,
-    );
+    required this.onResult,
+  });
 
-    wordlee = WordleeGame(answer: finalAnswer);
-  }
-
-  late final WordleeSettings settings;
-  late final WordleeGame wordlee;
+  final WordleeGame wordlee;
+  final WordleeSettings settings;
+  final ValueChanged<WordleeResult> onResult;
 
   @override
-  State<GameScreen> createState() => _GameScreenState();
+  State<GameScreenBase> createState() => _GameScreenBaseState();
 }
 
-class _GameScreenState extends State<GameScreen>
+class _GameScreenBaseState extends State<GameScreenBase>
     with SingleTickerProviderStateMixin {
   bool isLoading = false;
 
@@ -42,6 +36,10 @@ class _GameScreenState extends State<GameScreen>
   final ConfettiController confettiController = ConfettiController(
     duration: confettiAnimationDuration,
   );
+
+  WordleeSettings get settings {
+    return widget.settings;
+  }
 
   Duration get duration {
     return widget.settings.map(
@@ -73,7 +71,7 @@ class _GameScreenState extends State<GameScreen>
     if (status == AnimationStatus.completed) {
       if (widget.wordlee.state is GameStateInProgress) {
         final result = widget.wordlee.failGame(currentTime);
-        _showEndGameScreen(result);
+        widget.onResult(result);
       }
     }
   }
@@ -87,26 +85,6 @@ class _GameScreenState extends State<GameScreen>
 
   Duration get currentTime {
     return Duration(seconds: (controller.value * duration.inSeconds).floor());
-  }
-
-  _showEndGameScreen(WordleeResult result) {
-    if (widget.wordlee.state is GameStateSuccess) {
-      confettiController.play();
-    }
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        return widget.settings.map(
-          onePlayer: (one) => ResultsDialog1P(
-            settings: one,
-            result: result,
-          ),
-          twoPlayer: (two) => ResultsDialog2P(
-            settings: two,
-          ),
-        );
-      },
-    );
   }
 
   @override
@@ -186,9 +164,9 @@ class _GameScreenState extends State<GameScreen>
                 onFinishAnimation: () {
                   final state = widget.wordlee.state;
                   if (state is GameStateSuccess) {
-                    _showEndGameScreen(state.result);
+                    widget.onResult(state.result);
                   } else if (state is GameStateFailure) {
-                    _showEndGameScreen(state.result);
+                    widget.onResult(state.result);
                   }
                 },
               ),

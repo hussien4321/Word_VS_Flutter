@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:wordle_vs/blocs/pre_game_2p/pre_game_2p_bloc.dart';
+import 'package:wordle_vs/views/screens/game/game_screen_2p.dart';
 import 'package:wordle_vs/views/screens/pre_game_2p/pre_game_2p_mixin.dart';
 import 'package:wordle_vs/views/screens/pre_game_2p/pre_game_2p_views.dart';
 import 'package:wordle_vs/views/widgets/circular_button.dart';
@@ -50,18 +52,42 @@ class _PreGame2pScreen extends StatelessWidget with PreGame2pMixin {
         ),
         centerTitle: true,
       ),
-      body: BlocBuilder<PreGame2pBloc, PreGame2pState>(
+      body: BlocConsumer<PreGame2pBloc, PreGame2pState>(
+        listenWhen: (before, after) {
+          if (before is PreGame2pJoinedLobbyState &&
+              after is PreGame2pJoinedLobbyState) {
+            return !before.settings.hasStarted && after.settings.hasStarted;
+          } else if (before is PreGame2pCreatedLobbyState &&
+              after is PreGame2pCreatedLobbyState) {
+            return !before.settings.hasStarted && after.settings.hasStarted;
+          }
+          return false;
+        },
+        listener: (BuildContext context, PreGame2pState state) {
+          if (state is PreGame2pCreatedLobbyState) {
+            if (state.settings.hasStarted) {
+              Get.off(
+                () => Game2pScreen(settings: state.settings),
+              );
+            }
+          } else if (state is PreGame2pJoinedLobbyState) {
+            if (state.settings.hasStarted) {
+              Get.off(
+                () => Game2pScreen(settings: state.settings),
+              );
+            }
+          }
+        },
         builder: (ctx, snap) {
           final state = snap;
-          print('------- state.runtimeType:${state.runtimeType}');
           if (state is PreGame2pNewCreateLobbyState) {
             return NewCreateLobbyView(bloc: bloc, state: state);
           } else if (state is PreGame2pCreatedLobbyState) {
             return CreatedLobbyView(bloc: bloc, state: state);
           } else if (state is PreGame2pNewJoinLobbyState) {
-            return _buildModeSelector();
+            return NewJoinLobbyView(bloc: bloc, state: state);
           } else if (state is PreGame2pJoinedLobbyState) {
-            return _buildModeSelector();
+            return JoinedLobbyView(bloc: bloc, state: state);
           } else {
             return _buildModeSelector();
           }

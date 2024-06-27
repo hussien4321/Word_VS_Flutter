@@ -23,11 +23,13 @@ sealed class WordleeConfig with _$WordleeConfig {
 
 @Freezed(fromJson: true)
 class WordleeResult with _$WordleeResult {
+  const WordleeResult._();
+
   factory WordleeResult({
     required int timeInSeconds,
     required int attempts,
     required bool isCorrect,
-    required String? finalAnswer,
+    required String? finalGuess,
   }) = _WordleeResult;
 
   factory WordleeResult.fromJson(Map<String, dynamic> json) =>
@@ -36,22 +38,88 @@ class WordleeResult with _$WordleeResult {
 
 @Freezed(fromJson: true)
 sealed class WordleeSettings with _$WordleeSettings {
+  const WordleeSettings._();
+
   factory WordleeSettings.onePlayer({
     required WordleeTime time,
     required String answer,
   }) = WordleeSettings1P;
 
+  // ignore: invalid_annotation_target
+  @JsonSerializable(explicitToJson: true)
   factory WordleeSettings.twoPlayer({
     required String id,
     required bool isHost,
+    required bool hasStarted,
     required WordleeTime time,
     required bool hasPlayer2Joined,
     required String player1Answer,
     required String player2Answer,
+    required WordleeResult? player1Result,
+    required WordleeResult? player2Result,
   }) = WordleeSettings2P;
 
   factory WordleeSettings.fromJson(Map<String, dynamic> json) =>
       _$WordleeSettingsFromJson(json);
+}
+
+enum WordleeGame2pResult {
+  win,
+  loss,
+  draw;
+
+  WordleeGame2pResult maybeFlip(bool shouldFlip) {
+    if (shouldFlip) {
+      switch (this) {
+        case WordleeGame2pResult.win:
+          return WordleeGame2pResult.loss;
+        case WordleeGame2pResult.loss:
+          return WordleeGame2pResult.win;
+        default:
+          return WordleeGame2pResult.draw;
+      }
+    }
+    return this;
+  }
+}
+
+extension WordleeSettings2PExt on WordleeSettings2P {
+  bool get isComplete {
+    return player1Result != null && player2Result != null;
+  }
+
+  WordleeGame2pResult get outcome {
+    final shouldFlip = !isHost;
+    final player1Result = this.player1Result!;
+    final player2Result = this.player2Result!;
+
+    if (player1Result.isCorrect) {
+      if (player2Result.isCorrect) {
+        if (player1Result.attempts < player2Result.attempts) {
+          return WordleeGame2pResult.win.maybeFlip(shouldFlip);
+        } else if (player1Result.attempts > player2Result.attempts) {
+          return WordleeGame2pResult.loss.maybeFlip(shouldFlip);
+        } else {
+          if (player1Result.timeInSeconds < player2Result.timeInSeconds) {
+            return WordleeGame2pResult.win.maybeFlip(shouldFlip);
+          } else if (player1Result.timeInSeconds >
+              player2Result.timeInSeconds) {
+            return WordleeGame2pResult.loss.maybeFlip(shouldFlip);
+          } else {
+            return WordleeGame2pResult.draw.maybeFlip(shouldFlip);
+          }
+        }
+      } else {
+        return WordleeGame2pResult.win.maybeFlip(shouldFlip);
+      }
+    } else {
+      if (player2Result.isCorrect) {
+        return WordleeGame2pResult.loss.maybeFlip(shouldFlip);
+      } else {
+        return WordleeGame2pResult.draw.maybeFlip(shouldFlip);
+      }
+    }
+  }
 }
 
 @JsonEnum()

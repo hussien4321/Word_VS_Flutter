@@ -3,52 +3,17 @@ import 'package:get/get_utils/get_utils.dart';
 import 'package:wordle_vs/model/game_data/wordlee_config.dart';
 import 'package:wordle_vs/utils/duration_extensions.dart';
 
-enum _GameResultState {
-  win,
-  loss,
-  draw;
-}
-
 class ResultsDialog2P extends StatelessWidget {
-  const ResultsDialog2P({
+  ResultsDialog2P({
     super.key,
     required this.settings,
-    required this.player1Result,
-    required this.player2Result,
-  });
+  }) : assert(settings.player2Result != null && settings.player1Result != null);
 
   final WordleeSettings2P settings;
-  final WordleeResult player1Result;
-  final WordleeResult player2Result;
-
-  _GameResultState get _state {
-    if (player1Result.isCorrect) {
-      if (player2Result.isCorrect) {
-        if (player1Result.attempts < player2Result.attempts) {
-          return _GameResultState.win;
-        } else if (player1Result.attempts > player2Result.attempts) {
-          return _GameResultState.loss;
-        } else {
-          if (player1Result.timeInSeconds < player2Result.timeInSeconds) {
-            return _GameResultState.win;
-          } else if (player1Result.timeInSeconds >
-              player2Result.timeInSeconds) {
-            return _GameResultState.loss;
-          } else {
-            return _GameResultState.draw;
-          }
-        }
-      } else {
-        return _GameResultState.win;
-      }
-    } else {
-      if (player2Result.isCorrect) {
-        return _GameResultState.loss;
-      } else {
-        return _GameResultState.draw;
-      }
-    }
-  }
+  WordleeResult get player1Result =>
+      settings.isHost ? settings.player1Result! : settings.player2Result!;
+  WordleeResult get player2Result =>
+      settings.isHost ? settings.player2Result! : settings.player1Result!;
 
   @override
   Widget build(BuildContext context) {
@@ -84,9 +49,9 @@ class ResultsDialog2P extends StatelessWidget {
             ),
             _buildResultsRow(
               context,
-              left: player1Result.finalAnswer ?? "-----",
+              left: player1Result.finalGuess ?? "-----",
               middle: 'Final guess',
-              right: player2Result.finalAnswer ?? "-----",
+              right: player2Result.finalGuess ?? "-----",
             ),
             _buildResultsRow(
               context,
@@ -104,16 +69,17 @@ class ResultsDialog2P extends StatelessWidget {
 
   Widget _buildTitle(BuildContext context) {
     final textTheme = context.textTheme;
+    print('-ourcome ${settings.outcome}');
 
-    final message = switch (_state) {
-      _GameResultState.win => "You WON",
-      _GameResultState.draw => "DRAW",
-      _GameResultState.loss => "You Lost",
+    final message = switch (settings.outcome) {
+      WordleeGame2pResult.win => "You WON",
+      WordleeGame2pResult.draw => "DRAW",
+      WordleeGame2pResult.loss => "You Lost",
     };
-    final messageColor = switch (_state) {
-      _GameResultState.win => Colors.green.shade700,
-      _GameResultState.draw => Colors.orange.shade700,
-      _GameResultState.loss => Colors.red.shade700,
+    final messageColor = switch (settings.outcome) {
+      WordleeGame2pResult.win => Colors.green.shade700,
+      WordleeGame2pResult.draw => Colors.orange.shade700,
+      WordleeGame2pResult.loss => Colors.red.shade700,
     };
 
     return Text(
