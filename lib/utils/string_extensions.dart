@@ -1,8 +1,29 @@
 import 'package:wordle_vs/utils/constants.dart';
 
 extension StringExtensions on String {
+  bool get isValidAnswer {
+    return isValidWord && possibleValidWords.contains(toLowerCase());
+  }
+
+  bool get isValidWord {
+    if (length != maxWordLength) {
+      return false;
+    }
+    final word = toUpperCase();
+    for (int i = 0; i < maxWordLength; i++) {
+      if (!word[i].isLetter) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   bool get isLetter {
-    return length == 1 && (alphabet.contains(this) || this == ' ');
+    return length == 1 && alphabet.contains(this);
+  }
+
+  bool get isLetterOrSpace {
+    return isLetter || this == ' ';
   }
 
   String toPaddedText() {
@@ -14,7 +35,7 @@ extension StringExtensions on String {
   }
 
   int getCountOfLetter(String letter) {
-    assert(letter.isLetter);
+    assert(letter.isLetterOrSpace);
 
     var count = 0;
     for (int i = 0; i < length; i++) {
@@ -26,7 +47,7 @@ extension StringExtensions on String {
   }
 
   int getCountOfLetterUntilIndex(String letter, int index) {
-    assert(letter.isLetter);
+    assert(letter.isLetterOrSpace);
     assert(index <= maxWordLength - 1);
 
     var count = 0;

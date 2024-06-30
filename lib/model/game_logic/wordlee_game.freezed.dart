@@ -97,12 +97,20 @@ class __$$GameStateInProgressImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$GameStateInProgressImpl implements GameStateInProgress {
+class _$GameStateInProgressImpl
+    with DiagnosticableTreeMixin
+    implements GameStateInProgress {
   _$GameStateInProgressImpl();
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'GameState.inProgress()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('type', 'GameState.inProgress'));
   }
 
   @override
@@ -231,15 +239,25 @@ class __$$GameStateFailureImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$GameStateFailureImpl implements GameStateFailure {
+class _$GameStateFailureImpl
+    with DiagnosticableTreeMixin
+    implements GameStateFailure {
   _$GameStateFailureImpl({required this.result});
 
   @override
   final WordleeResult result;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'GameState.failure(result: $result)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'GameState.failure'))
+      ..add(DiagnosticsProperty('result', result));
   }
 
   @override
@@ -382,15 +400,25 @@ class __$$GameStateSuccessImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$GameStateSuccessImpl implements GameStateSuccess {
+class _$GameStateSuccessImpl
+    with DiagnosticableTreeMixin
+    implements GameStateSuccess {
   _$GameStateSuccessImpl({required this.result});
 
   @override
   final WordleeResult result;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'GameState.success(result: $result)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'GameState.success'))
+      ..add(DiagnosticsProperty('result', result));
   }
 
   @override

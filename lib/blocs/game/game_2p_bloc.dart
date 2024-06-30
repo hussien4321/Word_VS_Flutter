@@ -2,7 +2,7 @@ import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:wordle_vs/data/repositories/game_lobby_repository.dart';
-import 'package:wordle_vs/model/game_data/wordlee_config.dart';
+import 'package:wordle_vs/model/game_data/wordlee_session.dart';
 import 'package:wordle_vs/model/game_logic/wordlee_game.dart';
 
 part 'game_2p_bloc.freezed.dart';
@@ -10,11 +10,11 @@ part 'game_2p_bloc.freezed.dart';
 class Game2pBloc extends Bloc<Game2pEvent, Game2pState> {
   Game2pBloc({
     required this.gameLobbyRepository,
-    required WordleeSettings2P settings,
+    required WordleeSession2P session,
   }) : super(
           Game2pState(
-            settings: settings,
-            isHost: settings.isHost,
+            session: session,
+            isHost: session.isHost,
           ),
         ) {
     on<Game2pConnectEvent>(
@@ -31,12 +31,12 @@ class Game2pBloc extends Bloc<Game2pEvent, Game2pState> {
   final GameLobbyRepository gameLobbyRepository;
 
   _connect(Game2pConnectEvent event, Emitter<Game2pState> emit) async {
-    final settings = state.settings;
+    final session = state.session;
     return emit.forEach(
-      gameLobbyRepository.getGameState(settings.id, state.isHost),
+      gameLobbyRepository.getGameState(session.id, state.isHost),
       onData: (updatedSettings) {
         return state.copyWith(
-          settings: updatedSettings,
+          session: updatedSettings,
         );
       },
     );
@@ -45,7 +45,7 @@ class Game2pBloc extends Bloc<Game2pEvent, Game2pState> {
   _submitResult(
       Game2pSubmitResultsEvent event, Emitter<Game2pState> emit) async {
     await gameLobbyRepository.submitResults(
-      settings: state.settings,
+      session: state.session,
       result: event.results,
       isHost: state.isHost,
     );
@@ -55,7 +55,7 @@ class Game2pBloc extends Bloc<Game2pEvent, Game2pState> {
 @freezed
 class Game2pState with _$Game2pState {
   factory Game2pState({
-    required WordleeSettings2P settings,
+    required WordleeSession2P session,
     required bool isHost,
   }) = _Game2pState;
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wordle_vs/blocs/pre_game_2p/pre_game_2p_bloc.dart';
-import 'package:wordle_vs/utils/snackbar.dart';
+import 'package:wordle_vs/model/game_data/wordlee_session.dart';
+import 'package:wordle_vs/utils/string_extensions.dart';
 import 'package:wordle_vs/views/screens/pre_game_2p/pre_game_2p_mixin.dart';
 import 'package:wordle_vs/views/widgets/pd.row.dart';
 
@@ -17,34 +17,109 @@ abstract class PreGame2pBaseView<T extends PreGame2pState>
   final T state;
 }
 
-class NewCreateLobbyView
-    extends PreGame2pBaseView<PreGame2pNewCreateLobbyState> {
+class NewCreateLobbyView extends StatefulWidget {
   const NewCreateLobbyView({
     super.key,
-    required super.state,
-    required super.bloc,
+    required this.state,
+    required this.bloc,
   });
+
+  final PreGame2pBloc bloc;
+  final PreGame2pNewCreateLobbyState state;
+
+  @override
+  State<NewCreateLobbyView> createState() => _NewCreateLobbyViewState();
+}
+
+class _NewCreateLobbyViewState extends State<NewCreateLobbyView>
+    with PreGame2pMixin {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController answerController = TextEditingController();
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    answerController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return buildPaddedContent(
       children: [
         buildTimeSelector(
-          selectedTime: state.time,
-          onChanged: (newTime) => bloc.add(
-            PreGame2pEvent.updateTime(
+          selectedTime: widget.state.time,
+          onChanged: (newTime) => widget.bloc.add(
+            PreGame2pEvent.updateCreateLobby(
               time: newTime,
+              name: widget.state.name,
+              answer: widget.state.customAnswer,
+              answerType: widget.state.answerType,
             ),
           ),
         ),
+        const SizedBox(height: 8),
+        buildTextField(
+          context,
+          title: 'Name',
+          hint: 'Player 1',
+          controller: nameController,
+          onChanged: (newName) {
+            widget.bloc.add(
+              PreGame2pEvent.updateCreateLobby(
+                time: widget.state.time,
+                name: newName,
+                answer: widget.state.customAnswer,
+                answerType: widget.state.answerType,
+              ),
+            );
+          },
+        ),
+        const SizedBox(height: 8),
+        buildModeSelector(
+          selectedTime: widget.state.answerType,
+          onChanged: (newType) {
+            widget.bloc.add(
+              PreGame2pEvent.updateCreateLobby(
+                time: widget.state.time,
+                name: widget.state.name,
+                answer: widget.state.customAnswer,
+                answerType: newType,
+              ),
+            );
+          },
+        ),
+        if (widget.state.answerType.isCustom) ...[
+          const SizedBox(height: 8),
+          buildTextField(
+            context,
+            title: 'Answer',
+            hint: 'ANGEL',
+            subtitle: 'This will be the answer for the other player to guess!',
+            maxLength: 5,
+            textCapitalization: TextCapitalization.characters,
+            errorText: widget.state.errorText,
+            controller: nameController,
+            onChanged: (newAnswer) {
+              widget.bloc.add(
+                PreGame2pEvent.updateCreateLobby(
+                  time: widget.state.time,
+                  name: widget.state.name,
+                  answer: newAnswer,
+                  answerType: widget.state.answerType,
+                ),
+              );
+            },
+          ),
+        ],
         const Spacer(),
         buildSubmitButton(
-          title: state.isLoading ? 'Creating game...' : 'Create Game',
-          onPressed: state.isLoading
+          title: widget.state.isLoading ? 'Creating game...' : 'Create Game',
+          onPressed: widget.state.isLoading || !widget.state.isValid
               ? null
               : () {
-                  bloc.add(
-                    PreGame2pEvent.createLobby(state: state),
+                  widget.bloc.add(
+                    PreGame2pEvent.createLobby(state: widget.state),
                   );
                 },
         ),
@@ -71,6 +146,11 @@ class CreatedLobbyView extends PreGame2pBaseView<PreGame2pCreatedLobbyState> {
       color: Colors.grey.shade700,
     );
 
+    final player1Name = state.session.player1Name;
+    final player2Name = state.session.player2Name;
+    final hasP1Answer = state.session.player1Answer != null &&
+        state.session.player1Answer!.isNotEmpty;
+
     return buildPaddedContent(
       children: [
         buildLobbyDetailsBlock(
@@ -84,11 +164,20 @@ class CreatedLobbyView extends PreGame2pBaseView<PreGame2pCreatedLobbyState> {
               title: 'Time',
               titleStyle: rowTitleTheme,
               content: Text(
-                state.settings.time.label,
+                state.session.time.label,
                 style: rowContentTheme,
               ),
             ),
-            const SizedBox(height: 4),
+            PDRow(
+              title: 'Answer Type',
+              titleStyle: rowTitleTheme,
+              content: Text(
+                state.session.answerType.label,
+                style: rowContentTheme,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Divider(),
             Column(
               children: [
                 Text(
@@ -96,7 +185,7 @@ class CreatedLobbyView extends PreGame2pBaseView<PreGame2pCreatedLobbyState> {
                   style: rowTitleTheme,
                 ),
                 Text(
-                  state.settings.id,
+                  state.session.id,
                   textAlign: TextAlign.center,
                   style: textTheme.displaySmall?.copyWith(),
                 ),
@@ -111,32 +200,39 @@ class CreatedLobbyView extends PreGame2pBaseView<PreGame2pCreatedLobbyState> {
                 )
               ],
             ),
-            const SizedBox(height: 32),
+            const Divider(),
+            const SizedBox(height: 8),
             buildGameLobbyHeader(
               context,
               title: 'Players in lobby',
             ),
             buildPlayerConnectionStation(
               context,
-              name: 'Player 1 (You)',
+              name:
+                  '${player1Name.isNotEmpty ? player1Name : "Player 1"} (You)',
               isConnected: true,
             ),
             const SizedBox(height: 4),
             buildPlayerConnectionStation(
               context,
-              name: state.settings.hasPlayer2Joined
-                  ? 'Player 2'
+              name: state.session.hasPlayer2Joined
+                  ? (player2Name != null && player2Name.isNotEmpty
+                      ? player2Name
+                      : "Player 2")
                   : 'Waiting for player',
-              isConnected: state.settings.hasPlayer2Joined,
+              isChoosingAnswer: !hasP1Answer,
+              isConnected: state.session.hasPlayer2Joined,
             ),
           ],
         ),
         const Spacer(),
         buildSubmitButton(
-          title: state.settings.hasPlayer2Joined
-              ? 'Start Game'
-              : 'Not ready to start',
-          onPressed: !state.settings.hasPlayer2Joined
+          title: state.session.hasPlayer2Joined
+              ? !hasP1Answer
+                  ? 'Choosing answer...'
+                  : 'Start Game'
+              : 'Awaiting player...',
+          onPressed: !state.session.hasPlayer2Joined || !hasP1Answer
               ? null
               : () {
                   bloc.add(
@@ -165,100 +261,92 @@ class NewJoinLobbyView extends StatefulWidget {
 
 class _NewJoinLobbyViewState extends State<NewJoinLobbyView>
     with PreGame2pMixin {
-  TextEditingController controller = TextEditingController();
+  TextEditingController roomIDController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+
+  @override
+  void dispose() {
+    roomIDController.dispose();
+    nameController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return buildPaddedContent(
+      children: [
+        buildTextField(
+          context,
+          title: 'Room ID',
+          hint: 'ABCD',
+          errorText: widget.state.textError,
+          controller: roomIDController,
+          maxLength: 4,
+          textCapitalization: TextCapitalization.characters,
+          onChanged: (newID) {
+            widget.bloc.add(
+              PreGame2pEvent.updateJoinLobby(
+                roomID: newID,
+                name: widget.state.name,
+              ),
+            );
+          },
+        ),
+        const SizedBox(height: 16),
+        buildTextField(
+          context,
+          title: 'Name',
+          hint: 'Player 2',
+          controller: nameController,
+          onChanged: (newName) {
+            widget.bloc.add(
+              PreGame2pEvent.updateJoinLobby(
+                roomID: widget.state.joinRoomId,
+                name: newName,
+              ),
+            );
+          },
+        ),
+        const Spacer(),
+        buildSubmitButton(
+          title: !widget.state.isLoading ? 'Join room' : 'Connecting...',
+          onPressed: widget.state.isLoading || !widget.state.isValid
+              ? null
+              : () {
+                  widget.bloc.add(
+                    PreGame2pEvent.joinLobby(
+                      state: widget.state,
+                    ),
+                  );
+                },
+        ),
+      ],
+    );
+  }
+}
+
+class JoinedLobbyView extends StatefulWidget {
+  const JoinedLobbyView({
+    super.key,
+    required this.state,
+    required this.bloc,
+  });
+
+  final PreGame2pBloc bloc;
+  final PreGame2pJoinedLobbyState state;
+
+  @override
+  State<JoinedLobbyView> createState() => _JoinedLobbyViewState();
+}
+
+class _JoinedLobbyViewState extends State<JoinedLobbyView> with PreGame2pMixin {
+  final TextEditingController controller = TextEditingController();
 
   @override
   void dispose() {
     controller.dispose();
     super.dispose();
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocListener<PreGame2pBloc, PreGame2pState>(
-      bloc: widget.bloc,
-      listenWhen: (stateA, stateB) {
-        return stateA is PreGame2pNewJoinLobbyState &&
-            stateB is PreGame2pNewJoinLobbyState &&
-            stateA.error != stateB.error;
-      },
-      listener: (context, state) {
-        if (state is PreGame2pNewJoinLobbyState && state.error != null) {
-          // TODO: fix snackbar not showing
-          topSnackbar('Error: ${state.error}');
-        }
-      },
-      child: buildPaddedContent(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: 200,
-                child: buildLobbyDetailsBlock(
-                  context,
-                  children: [
-                    TextField(
-                      onChanged: (value) {
-                        widget.bloc.add(
-                          PreGame2pEvent.updateJoinRoomID(
-                            roomID: value,
-                          ),
-                        );
-                      },
-                      autofocus: true,
-                      showCursor: false,
-                      decoration: InputDecoration(
-                        hintText: 'Room ID',
-                        errorText: widget.state.textError,
-                        hintStyle:
-                            Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                  color: Colors.black45,
-                                ),
-                        floatingLabelBehavior: FloatingLabelBehavior.never,
-                        alignLabelWithHint: true,
-                        isCollapsed: true,
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                      style: Theme.of(context).textTheme.titleLarge,
-                      textAlign: TextAlign.center,
-                      maxLength: 4,
-                      textCapitalization: TextCapitalization.characters,
-                      keyboardType: TextInputType.text,
-                      textAlignVertical: TextAlignVertical.center,
-                      controller: controller,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const Spacer(),
-          buildSubmitButton(
-            title: !widget.state.isLoading ? 'Join room' : 'Connecting...',
-            onPressed: widget.state.isLoading || !widget.state.isValid
-                ? null
-                : () {
-                    widget.bloc.add(
-                      PreGame2pEvent.joinLobby(
-                        state: widget.state,
-                      ),
-                    );
-                  },
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class JoinedLobbyView extends PreGame2pBaseView<PreGame2pJoinedLobbyState> {
-  const JoinedLobbyView({
-    super.key,
-    required super.state,
-    required super.bloc,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -271,61 +359,127 @@ class JoinedLobbyView extends PreGame2pBaseView<PreGame2pJoinedLobbyState> {
       color: Colors.grey.shade700,
     );
 
+    final session = widget.state.session;
+    final customAnswer = widget.state.customAnswer;
+    final player1Name = session.player1Name;
+    final player2Name = session.player2Name;
+
     return buildPaddedContent(
       children: [
-        buildLobbyDetailsBlock(
-          context,
-          children: [
-            buildGameLobbyHeader(
-              context,
-              title: 'Game settings',
-            ),
-            PDRow(
-              title: 'Time',
-              titleStyle: rowTitleTheme,
-              content: Text(
-                state.settings.time.label,
-                style: rowContentTheme,
+        if (session.isAwaitingPlayer2Data)
+          buildTextField(
+            context,
+            title: 'Choose Answer',
+            subtitle: 'This will be the answer for the other player to guess!',
+            hint: 'WORDS',
+            errorText: widget.state.errorText,
+            controller: controller,
+            maxLength: 5,
+            textCapitalization: TextCapitalization.characters,
+            onChanged: (newAnswer) {
+              widget.bloc.add(
+                PreGame2pEvent.updateJoinedLobby(answer: newAnswer),
+              );
+            },
+          )
+        else
+          buildLobbyDetailsBlock(
+            context,
+            children: [
+              buildGameLobbyHeader(
+                context,
+                title: 'Game settings',
               ),
-            ),
-            const SizedBox(height: 4),
-            Column(
-              children: [
-                Text(
-                  'Room ID',
-                  style: rowTitleTheme,
+              PDRow(
+                title: 'Time',
+                titleStyle: rowTitleTheme,
+                content: Text(
+                  widget.state.session.time.label,
+                  style: rowContentTheme,
                 ),
-                Text(
-                  state.settings.id,
-                  textAlign: TextAlign.center,
-                  style: textTheme.displaySmall?.copyWith(),
+              ),
+              PDRow(
+                title: 'Answer Type',
+                titleStyle: rowTitleTheme,
+                content: Text(
+                  widget.state.session.answerType.label,
+                  style: rowContentTheme,
                 ),
-              ],
-            ),
-            const SizedBox(height: 32),
-            buildGameLobbyHeader(
-              context,
-              title: 'Players in lobby',
-            ),
-            buildPlayerConnectionStation(
-              context,
-              name: 'Player 1',
-              isConnected: true,
-            ),
-            const SizedBox(height: 4),
-            buildPlayerConnectionStation(
-              context,
-              name: 'Player 2 (You)',
-              isConnected: true,
-            ),
-          ],
-        ),
+              ),
+              const SizedBox(height: 4),
+              Column(
+                children: [
+                  Text(
+                    'Room ID',
+                    style: rowTitleTheme,
+                  ),
+                  Text(
+                    widget.state.session.id,
+                    textAlign: TextAlign.center,
+                    style: textTheme.displaySmall?.copyWith(),
+                  ),
+                ],
+              ),
+              const Divider(),
+              const SizedBox(height: 8),
+              buildGameLobbyHeader(
+                context,
+                title: 'Players in lobby',
+              ),
+              buildPlayerConnectionStation(
+                context,
+                name: player1Name.isNotEmpty ? player1Name : "Player 1",
+                isConnected: true,
+              ),
+              const SizedBox(height: 4),
+              buildPlayerConnectionStation(
+                context,
+                name:
+                    '${player2Name != null && player2Name.isNotEmpty ? player2Name : "Player 2"} (You)',
+                isConnected: true,
+              ),
+            ],
+          ),
         const Spacer(),
         buildSubmitButton(
-          title: 'Waiting for host to start',
-          onPressed: null,
+          title: widget.state.session.player1Answer != null
+              ? 'Waiting for host to start'
+              : 'Submit Answer',
+          onPressed: widget.state.session.player1Answer == null &&
+                  (customAnswer != null && customAnswer.isValidAnswer)
+              ? () {
+                  widget.bloc.add(
+                    PreGame2pEvent.submitCustomAnswer(
+                      state: widget.state,
+                      customAnswer: customAnswer,
+                    ),
+                  );
+                }
+              : null,
         ),
       ],
     );
   }
+
+  // Widget _buildRemainingQuestions(BuildContext context) {
+  //   return buildTextField(
+  //     context,
+  //     title: 'Answer',
+  //     hint: 'ANGEL',
+  //     maxLength: 5,
+  //     textCapitalization: TextCapitalization.characters,
+  //     // errorText: widget.state.errorText,
+  //     controller: nameController,
+  //     onChanged: (newAnswer) {
+  //       // widget.bloc.add(
+  //       //   PreGame2pEvent.updateCreateLobby(
+  //       //     time: widget.state.time,
+  //       //     name: widget.state.name,
+  //       //     answer: newAnswer,
+  //       //     answerType: widget.state.answerType,
+  //       //   ),
+  //       // );
+  //     },
+  //   );
+  // }
 }

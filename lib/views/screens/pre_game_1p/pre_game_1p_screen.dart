@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:wordle_vs/model/game_data/wordlee_config.dart';
+import 'package:wordle_vs/model/game_data/wordlee_session.dart';
 import 'package:wordle_vs/views/screens/game/game_screen_1p.dart';
 import 'package:wordle_vs/views/widgets/pd.row.dart';
 
@@ -60,7 +60,7 @@ class _PreGame1pScreenState extends State<PreGame1pScreen> {
               onPressed: () {
                 Get.off(
                   () => GameScreen1p(
-                    settings: WordleeSettings1P(
+                    session: WordleeSession1P(
                       answer: generateRandomWord(),
                       time: selectedTime,
                     ),

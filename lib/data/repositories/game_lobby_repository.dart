@@ -1,16 +1,29 @@
-import 'package:wordle_vs/model/game_data/wordlee_config.dart';
+import 'package:wordle_vs/model/game_data/wordlee_session.dart';
 
 abstract class GameLobbyRepository {
-  Stream<WordleeSettings2P> getGameState(String roomID, bool isHost);
+  Stream<WordleeSession2P> getGameState(String roomID, bool isHost);
 
-  Future<WordleeSettings2P> createLobby({required WordleeTime time});
+  Future<WordleeSession2P> createLobby({
+    required WordleeTime time,
+    required WordleeAnswerType answerType,
+    required String? customAnswer,
+    required String name,
+  });
 
-  Future<WordleeSettings2P?> joinLobby({required String roomID});
+  Future<WordleeSession2P?> joinLobby({
+    required String roomID,
+    required String? name,
+  });
 
-  Future<void> startGame({required WordleeSettings2P settings});
+  Future<WordleeSession2P> submitP2Answer({
+    required String roomID,
+    required String answer,
+  });
+
+  Future<void> startGame({required WordleeSession2P session});
 
   Future<void> submitResults({
-    required WordleeSettings2P settings,
+    required WordleeSession2P session,
     required WordleeResult result,
     required bool isHost,
   });

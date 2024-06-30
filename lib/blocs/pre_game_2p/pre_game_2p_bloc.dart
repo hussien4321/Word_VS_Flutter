@@ -4,8 +4,9 @@ import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:wordle_vs/data/repositories/game_lobby_repository.dart';
-import 'package:wordle_vs/model/game_data/wordlee_config.dart';
+import 'package:wordle_vs/model/game_data/wordlee_session.dart';
 import 'package:wordle_vs/utils/constants.dart';
+import 'package:wordle_vs/utils/string_extensions.dart';
 
 part 'pre_game_2p_bloc.freezed.dart';
 
@@ -16,23 +17,33 @@ class PreGame2pBloc extends Bloc<PreGame2pEvent, PreGame2pState> {
           PreGame2pState.init(),
         ) {
     on<PreGame2pSelectModeEvent>(_selectMode, transformer: restartable());
-    on<PreGame2pUpdateTimeEvent>(_updateTime, transformer: restartable());
-    on<PreGame2pUpdateRoomIDEvent>(_updateRoomID, transformer: restartable());
+    on<PreGame2pUpdateCreateLobbyEvent>(_updateCreateLobby,
+        transformer: restartable());
+    on<PreGame2pUpdateJoinLobbyEvent>(_updateJoinLobby,
+        transformer: restartable());
     on<PreGame2pCreateLobbyEvent>(_createLobby, transformer: restartable());
     on<PreGame2pJoinLobbyEvent>(_joinLobby, transformer: restartable());
+    on<PreGame2pSubmitCustomAnswerEvent>(_submitCustomAnswer,
+        transformer: restartable());
+    on<PreGame2pUpdateJoinedLobbyEvent>(_updateJoinedLobby,
+        transformer: restartable());
     on<PreGame2pStartGameEvent>(_startGame, transformer: restartable());
     on<PreGame2pPopToStartEvent>(_popToStart, transformer: restartable());
     on<PreGame2pDisconnectEvent>(_disconnect, transformer: restartable());
   }
 
   final GameLobbyRepository gameLobbyRepository;
-  StreamSubscription<WordleeSettings2P>? _createdLobbySubcription;
-  StreamSubscription<WordleeSettings2P>? _joinedLobbySubcription;
+  StreamSubscription<WordleeSession2P>? _createdLobbySubcription;
+  StreamSubscription<WordleeSession2P>? _joinedLobbySubcription;
 
   PreGame2pState get newCreateLobby {
     return PreGame2pState.newCreateLobby(
       time: WordleeTime.threeMin,
+      name: '',
+      answerType: WordleeAnswerType.random,
+      customAnswer: null,
       isLoading: false,
+      errorText: '',
     );
   }
 
@@ -41,7 +52,7 @@ class PreGame2pBloc extends Bloc<PreGame2pEvent, PreGame2pState> {
       joinRoomId: '',
       isLoading: false,
       textError: null,
-      error: null,
+      name: '',
     );
   }
 
@@ -65,21 +76,35 @@ class PreGame2pBloc extends Bloc<PreGame2pEvent, PreGame2pState> {
     );
   }
 
-  _updateTime(
-    PreGame2pUpdateTimeEvent event,
+  _updateCreateLobby(
+    PreGame2pUpdateCreateLobbyEvent event,
     Emitter<PreGame2pState> emit,
   ) {
+    String? answer = event.answer;
+    if (answer != null && !answer.isValidWord) {
+      answer = null;
+    }
+    String? errorText;
+    if (answer != null && !answer.isValidAnswer) {
+      errorText = 'Not a valid word';
+    }
     state.whenOrNull<void>(
-      newCreateLobby: (a, b) {
+      newCreateLobby: (a, b, c, d, e, f) {
         emit(
-          (state as PreGame2pNewCreateLobbyState).copyWith(time: event.time),
+          (state as PreGame2pNewCreateLobbyState).copyWith(
+            time: event.time,
+            answerType: event.answerType,
+            customAnswer: answer,
+            name: event.name,
+            errorText: errorText,
+          ),
         );
       },
     );
   }
 
-  _updateRoomID(
-    PreGame2pUpdateRoomIDEvent event,
+  _updateJoinLobby(
+    PreGame2pUpdateJoinLobbyEvent event,
     Emitter<PreGame2pState> emit,
   ) {
     state.whenOrNull<void>(
@@ -88,6 +113,7 @@ class PreGame2pBloc extends Bloc<PreGame2pEvent, PreGame2pState> {
         emit(
           (state as PreGame2pNewJoinLobbyState).copyWith(
             joinRoomId: roomID,
+            name: event.name,
             textError: error,
           ),
         );
@@ -118,25 +144,28 @@ class PreGame2pBloc extends Bloc<PreGame2pEvent, PreGame2pState> {
 
     emit(createState.copyWith(isLoading: true));
 
-    final settings =
-        await gameLobbyRepository.createLobby(time: createState.time);
+    final session = await gameLobbyRepository.createLobby(
+      time: createState.time,
+      name: createState.name,
+      answerType: createState.answerType,
+      customAnswer: createState.customAnswer,
+    );
 
     _createdLobbySubcription?.cancel();
     _createdLobbySubcription = gameLobbyRepository
-        .getGameState(settings.id, true)
+        .getGameState(session.id, true)
         .listen((updatedSettings) {
-      print('---new data! ${updatedSettings.toJson()}');
       final currentState = state;
       if (currentState is PreGame2pCreatedLobbyState) {
         emit(
           currentState.copyWith(
-            settings: updatedSettings,
+            session: updatedSettings,
           ),
         );
       } else {
         emit(
           PreGame2pState.createdLobby(
-            settings: updatedSettings,
+            session: updatedSettings,
             isLoading: false,
           ),
         );
@@ -153,13 +182,14 @@ class PreGame2pBloc extends Bloc<PreGame2pEvent, PreGame2pState> {
 
     emit(joinState.copyWith(
       isLoading: true,
-      error: null,
     ));
 
-    final settings =
-        await gameLobbyRepository.joinLobby(roomID: joinState.joinRoomId);
+    final session = await gameLobbyRepository.joinLobby(
+      roomID: joinState.joinRoomId,
+      name: joinState.name,
+    );
 
-    if (settings == null) {
+    if (session == null) {
       emit(
         joinState.copyWith(
           isLoading: false,
@@ -169,16 +199,69 @@ class PreGame2pBloc extends Bloc<PreGame2pEvent, PreGame2pState> {
     } else {
       _joinedLobbySubcription?.cancel();
       _joinedLobbySubcription = gameLobbyRepository
-          .getGameState(settings.id, false)
+          .getGameState(session.id, false)
           .listen((updatedSettings) {
         emit(
           PreGame2pState.joinedLobby(
-            settings: updatedSettings,
+            session: updatedSettings,
+            isLoading: false,
+            errorText: null,
+            customAnswer: null,
           ),
         );
       });
     }
     await _joinedLobbySubcription!.asFuture();
+  }
+
+  _updateJoinedLobby(
+    PreGame2pUpdateJoinedLobbyEvent event,
+    Emitter<PreGame2pState> emit,
+  ) async {
+    String answer = event.answer;
+    String? errorText;
+    if (answer.length == maxWordLength &&
+        !answer.isValidAnswer) {
+      errorText = 'Not a valid word';
+    }
+
+    state.whenOrNull<void>(
+      joinedLobby: (session, isLoading, c, d) {
+        emit(
+          (state as PreGame2pJoinedLobbyState).copyWith(
+            customAnswer: event.answer,
+            isLoading: isLoading,
+            session: session,
+            errorText: errorText,
+          ),
+        );
+      },
+    );
+  }
+
+  _submitCustomAnswer(
+    PreGame2pSubmitCustomAnswerEvent event,
+    Emitter<PreGame2pState> emit,
+  ) async {
+    final joinState = event.state;
+
+    emit(
+      joinState.copyWith(
+        isLoading: true,
+      ),
+    );
+
+    final session = await gameLobbyRepository.submitP2Answer(
+      roomID: joinState.session.id,
+      answer: joinState.customAnswer!,
+    );
+
+    emit(
+      joinState.copyWith(
+        session: session,
+        isLoading: false,
+      ),
+    );
   }
 
   _startGame(
@@ -191,7 +274,7 @@ class PreGame2pBloc extends Bloc<PreGame2pEvent, PreGame2pState> {
       isLoading: true,
     ));
 
-    await gameLobbyRepository.startGame(settings: createState.settings);
+    await gameLobbyRepository.startGame(session: createState.session);
   }
 
   _popToStart(
@@ -223,37 +306,55 @@ class PreGame2pState with _$PreGame2pState {
 
   factory PreGame2pState.newCreateLobby({
     required WordleeTime time,
+    required String name,
+    required WordleeAnswerType answerType,
+    required String? customAnswer,
+    required String? errorText,
     required bool isLoading,
   }) = PreGame2pNewCreateLobbyState;
 
   factory PreGame2pState.createdLobby({
-    required WordleeSettings2P settings,
+    required WordleeSession2P session,
     required bool isLoading,
   }) = PreGame2pCreatedLobbyState;
 
   factory PreGame2pState.newJoinLobby({
     required String joinRoomId,
+    required String name,
     required bool isLoading,
     required String? textError,
-    required String? error,
   }) = PreGame2pNewJoinLobbyState;
 
   factory PreGame2pState.joinedLobby({
-    required WordleeSettings2P settings,
+    required WordleeSession2P session,
+    required bool isLoading,
+    required String? customAnswer,
+    required String? errorText,
   }) = PreGame2pJoinedLobbyState;
+}
+
+extension PreGame2pNewCreateLobbyStateExt on PreGame2pNewCreateLobbyState {
+  bool get isValid {
+    print('------ answerType:$answerType / custom:$customAnswer ');
+    return !answerType.isCustom ||
+        (customAnswer != null && customAnswer!.isValidAnswer);
+  }
 }
 
 extension PreGame2pNewJoinLobbyStateExt on PreGame2pNewJoinLobbyState {
   bool get isValid {
     if (textError != null) {
+      print('----- error');
       return false;
     }
     if (joinRoomId.length != maxRoomIDLength) {
+      print('----- joinRoomId ${joinRoomId.length}');
       return false;
     }
 
     for (int i = 0; i < joinRoomId.length; i++) {
       if (!alphabet.contains(joinRoomId[i])) {
+        print('----- letter ${joinRoomId[i]}');
         return false;
       }
     }
@@ -267,13 +368,17 @@ class PreGame2pEvent with _$PreGame2pEvent {
     required bool isCreating,
   }) = PreGame2pSelectModeEvent;
 
-  factory PreGame2pEvent.updateTime({
+  factory PreGame2pEvent.updateCreateLobby({
     required WordleeTime time,
-  }) = PreGame2pUpdateTimeEvent;
+    required String name,
+    required WordleeAnswerType answerType,
+    required String? answer,
+  }) = PreGame2pUpdateCreateLobbyEvent;
 
-  factory PreGame2pEvent.updateJoinRoomID({
+  factory PreGame2pEvent.updateJoinLobby({
     required String roomID,
-  }) = PreGame2pUpdateRoomIDEvent;
+    required String name,
+  }) = PreGame2pUpdateJoinLobbyEvent;
 
   factory PreGame2pEvent.createLobby({
     required PreGame2pNewCreateLobbyState state,
@@ -282,6 +387,15 @@ class PreGame2pEvent with _$PreGame2pEvent {
   factory PreGame2pEvent.joinLobby({
     required PreGame2pNewJoinLobbyState state,
   }) = PreGame2pJoinLobbyEvent;
+
+  factory PreGame2pEvent.submitCustomAnswer({
+    required PreGame2pJoinedLobbyState state,
+    required String customAnswer,
+  }) = PreGame2pSubmitCustomAnswerEvent;
+
+  factory PreGame2pEvent.updateJoinedLobby({
+    required String answer,
+  }) = PreGame2pUpdateJoinedLobbyEvent;
 
   factory PreGame2pEvent.startGame({
     required PreGame2pCreatedLobbyState state,

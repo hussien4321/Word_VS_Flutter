@@ -42,6 +42,7 @@ class _PreGame2pScreen extends StatelessWidget with PreGame2pMixin {
     return PopScope(
       canPop: (bloc.state is PreGame2pInitState),
       onPopInvoked: (canPop) {
+        FocusScope.of(context).unfocus();
         if (!canPop) {
           if (bloc.state is PreGame2pNewJoinLobbyState ||
               bloc.state is PreGame2pNewCreateLobbyState) {
@@ -78,24 +79,24 @@ class _PreGame2pScreen extends StatelessWidget with PreGame2pMixin {
           listenWhen: (before, after) {
             if (before is PreGame2pJoinedLobbyState &&
                 after is PreGame2pJoinedLobbyState) {
-              return !before.settings.hasStarted && after.settings.hasStarted;
+              return !before.session.hasStarted && after.session.hasStarted;
             } else if (before is PreGame2pCreatedLobbyState &&
                 after is PreGame2pCreatedLobbyState) {
-              return !before.settings.hasStarted && after.settings.hasStarted;
+              return !before.session.hasStarted && after.session.hasStarted;
             }
             return false;
           },
           listener: (BuildContext context, PreGame2pState state) {
             if (state is PreGame2pCreatedLobbyState) {
-              if (state.settings.hasStarted) {
+              if (state.session.hasStarted) {
                 Get.off(
-                  () => GameScreen2p(settings: state.settings),
+                  () => GameScreen2p(session: state.session),
                 );
               }
             } else if (state is PreGame2pJoinedLobbyState) {
-              if (state.settings.hasStarted) {
+              if (state.session.hasStarted) {
                 Get.off(
-                  () => GameScreen2p(settings: state.settings),
+                  () => GameScreen2p(session: state.session),
                 );
               }
             }

@@ -11,7 +11,7 @@ class KeyboardLetter extends StatelessWidget {
     required this.onTap,
     this.isValid = true,
     this.isSpecial = false,
-  }) : assert(letter.isLetter || isSpecial);
+  }) : assert(letter.isLetterOrSpace || isSpecial);
 
   final String letter;
   final bool isSpecial;

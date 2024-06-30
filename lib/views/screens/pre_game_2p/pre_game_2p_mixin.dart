@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:wordle_vs/model/game_data/wordlee_config.dart';
+import 'package:wordle_vs/model/game_data/wordlee_session.dart';
 import 'package:wordle_vs/views/widgets/pd.row.dart';
+import 'package:wordle_vs/views/widgets/wv.segmented_button.dart';
+import 'package:wordle_vs/views/widgets/wv.text_field.dart';
 
 mixin PreGame2pMixin {
   Widget buildPaddedContent({required List<Widget> children}) {
@@ -50,23 +52,68 @@ mixin PreGame2pMixin {
     required WordleeTime selectedTime,
     ValueChanged<WordleeTime>? onChanged,
   }) {
-    final isEnabled = onChanged != null;
     return PDRow(
       title: 'Time',
-      content: SegmentedButton<WordleeTime>(
+      content: WVSegmentedButton<WordleeTime>(
         segments: WordleeTime.values.map(
           (time) {
-            return ButtonSegment(
+            return WVButtonSegment(
               value: time,
-              enabled: isEnabled || time == selectedTime,
-              label: Text(time.label),
+              label: time.label,
             );
           },
         ).toList(),
-        selected: {selectedTime},
-        showSelectedIcon: false,
-        onSelectionChanged:
-            onChanged == null ? (_) {} : (newTime) => onChanged(newTime.first),
+        selected: selectedTime,
+        onChanged: onChanged,
+      ),
+    );
+  }
+
+  Widget buildModeSelector({
+    required WordleeAnswerType selectedTime,
+    ValueChanged<WordleeAnswerType>? onChanged,
+  }) {
+    return PDRow(
+      title: 'Answer type',
+      content: WVSegmentedButton<WordleeAnswerType>(
+        segments: WordleeAnswerType.values.map(
+          (time) {
+            return WVButtonSegment(
+              value: time,
+              label: time.label,
+            );
+          },
+        ).toList(),
+        selected: selectedTime,
+        onChanged: onChanged,
+      ),
+    );
+  }
+
+  Widget buildTextField(
+    BuildContext context, {
+    required String title,
+    required String hint,
+    required TextEditingController controller,
+    required ValueChanged<String> onChanged,
+    String? subtitle,
+    int? maxLength,
+    TextCapitalization? textCapitalization,
+    String? errorText,
+  }) {
+    final width = MediaQuery.of(context).size.width / 2;
+    return PDRow(
+      title: title,
+      subtitle: subtitle,
+      content: SizedBox(
+        width: width,
+        child: WVTextField(
+          hint: hint,
+          errorText: errorText,
+          textCapitalization: textCapitalization,
+          onChanged: onChanged,
+          maxLength: maxLength,
+        ),
       ),
     );
   }
@@ -75,6 +122,7 @@ mixin PreGame2pMixin {
     BuildContext context, {
     required String name,
     required bool isConnected,
+    bool isChoosingAnswer = false,
   }) {
     return Row(
       children: [
@@ -94,8 +142,17 @@ mixin PreGame2pMixin {
                 fontStyle: isConnected ? null : FontStyle.italic,
               ),
         ),
-        if (!isConnected) ...[
+        if (!isConnected || isChoosingAnswer) ...[
           const SizedBox(width: 8),
+          if (isChoosingAnswer)
+            Text(
+              '(Choosing answer)',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey.shade600,
+                    // fontStyle: FontStyle.italic,
+                  ),
+            ),
+          const SizedBox(width: 4),
           SizedBox(
             height: 10,
             width: 10,

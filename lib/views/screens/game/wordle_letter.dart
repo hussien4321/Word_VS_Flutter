@@ -11,7 +11,7 @@ class WordleLetter extends StatefulWidget {
     required this.letter,
     this.letterGuess,
     this.isLastLine = false,
-  }) : assert(letter.isLetter);
+  }) : assert(letter.isLetterOrSpace);
 
   final String letter;
   final LetterGuess? letterGuess;

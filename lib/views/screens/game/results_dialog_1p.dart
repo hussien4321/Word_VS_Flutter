@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_utils/get_utils.dart';
-import 'package:wordle_vs/model/game_data/wordlee_config.dart';
+import 'package:wordle_vs/model/game_data/wordlee_session.dart';
 import 'package:wordle_vs/utils/duration_extensions.dart';
 
 class ResultsDialog1P extends StatelessWidget {
   const ResultsDialog1P({
     super.key,
-    required this.settings,
+    required this.session,
     required this.result,
   });
 
-  final WordleeSettings1P settings;
+  final WordleeSession1P session;
   final WordleeResult result;
 
   @override
@@ -40,7 +40,7 @@ class ResultsDialog1P extends StatelessWidget {
             _buildResultsRow(
               context,
               title: 'Final guess',
-              value: (result.finalGuess == settings.answer
+              value: (result.finalGuess == session.answer
                       ? "✓"
                       : result.finalGuess) ??
                   "-----",
@@ -48,7 +48,7 @@ class ResultsDialog1P extends StatelessWidget {
             _buildResultsRow(
               context,
               title: 'Answer',
-              value: settings.answer,
+              value: session.answer,
             ),
             const SizedBox(height: 32),
             _buildButton(context),

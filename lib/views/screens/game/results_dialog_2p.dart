@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_utils/get_utils.dart';
-import 'package:wordle_vs/model/game_data/wordlee_config.dart';
+import 'package:wordle_vs/model/game_data/wordlee_session.dart';
 import 'package:wordle_vs/utils/duration_extensions.dart';
 
 class ResultsDialog2P extends StatelessWidget {
   ResultsDialog2P({
     super.key,
-    required this.settings,
-  }) : assert(settings.player2Result != null && settings.player1Result != null);
+    required this.session,
+  }) : assert(session.player2Result != null && session.player1Result != null);
 
-  final WordleeSettings2P settings;
+  final WordleeSession2P session;
   WordleeResult get player1Result =>
-      settings.isHost ? settings.player1Result! : settings.player2Result!;
+      session.isHost ? session.player1Result! : session.player2Result!;
   WordleeResult get player2Result =>
-      settings.isHost ? settings.player2Result! : settings.player1Result!;
+      session.isHost ? session.player2Result! : session.player1Result!;
+  String get player1Answer =>
+      session.isHost ? session.player1Answer! : session.player2Answer;
+  String get player2Answer =>
+      session.isHost ? session.player2Answer : session.player1Answer!;
 
   @override
   Widget build(BuildContext context) {
@@ -49,21 +53,21 @@ class ResultsDialog2P extends StatelessWidget {
             ),
             _buildResultsRow(
               context,
-              left: (player1Result.finalGuess == settings.player1Answer
+              left: (player1Result.finalGuess == player1Answer
                       ? "✓"
                       : player1Result.finalGuess) ??
                   "-----",
               middle: 'Final guess',
-              right: (player2Result.finalGuess == settings.player2Answer
+              right: (player2Result.finalGuess == player2Answer
                       ? "✓"
                       : player2Result.finalGuess) ??
                   "-----",
             ),
             _buildResultsRow(
               context,
-              left: settings.player1Answer,
+              left: player1Answer,
               middle: 'Answer',
-              right: settings.player2Answer,
+              right: player2Answer,
             ),
             const SizedBox(height: 32),
             _buildButton(context),
@@ -76,12 +80,12 @@ class ResultsDialog2P extends StatelessWidget {
   Widget _buildTitle(BuildContext context) {
     final textTheme = context.textTheme;
 
-    final message = switch (settings.outcome) {
+    final message = switch (session.outcome) {
       WordleeGame2pResult.win => "You WON",
       WordleeGame2pResult.draw => "DRAW",
       WordleeGame2pResult.loss => "You Lost",
     };
-    final messageColor = switch (settings.outcome) {
+    final messageColor = switch (session.outcome) {
       WordleeGame2pResult.win => Colors.green.shade700,
       WordleeGame2pResult.draw => Colors.orange.shade700,
       WordleeGame2pResult.loss => Colors.red.shade700,
@@ -90,7 +94,6 @@ class ResultsDialog2P extends StatelessWidget {
     return Text(
       message,
       style: textTheme.titleLarge?.copyWith(
-        // fontWeight: FontWeight.bold,
         color: messageColor,
       ),
     );

@@ -1,24 +1,36 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'wordlee_config.freezed.dart';
-part 'wordlee_config.g.dart';
+part 'wordlee_session.freezed.dart';
+part 'wordlee_session.g.dart';
 
 @Freezed(fromJson: true)
-sealed class WordleeConfig with _$WordleeConfig {
-  factory WordleeConfig.onePlayer({
-    required WordleeSettings1P settings1p,
-    WordleeResult? results,
-  }) = WordleeConfig1P;
+sealed class WordleeSession with _$WordleeSession {
+  const WordleeSession._();
 
-  factory WordleeConfig.twoPlayer({
+  factory WordleeSession.onePlayer({
+    required WordleeTime time,
+    required String answer,
+  }) = WordleeSession1P;
+
+  // ignore: invalid_annotation_target
+  @JsonSerializable(explicitToJson: true)
+  factory WordleeSession.twoPlayer({
     required String id,
-    required WordleeSettings2P settings2p,
-    WordleeResult? player1Results,
-    WordleeResult? player2Results,
-  }) = WordleeConfig2P;
+    required bool isHost,
+    required bool hasStarted,
+    required WordleeTime time,
+    required bool hasPlayer2Joined,
+    required WordleeAnswerType answerType,
+    required String? player1Answer,
+    required String player2Answer,
+    required String player1Name,
+    required String? player2Name,
+    required WordleeResult? player1Result,
+    required WordleeResult? player2Result,
+  }) = WordleeSession2P;
 
-  factory WordleeConfig.fromJson(Map<String, dynamic> json) =>
-      _$WordleeConfigFromJson(json);
+  factory WordleeSession.fromJson(Map<String, dynamic> json) =>
+      _$WordleeSessionFromJson(json);
 }
 
 @Freezed(fromJson: true)
@@ -34,33 +46,6 @@ class WordleeResult with _$WordleeResult {
 
   factory WordleeResult.fromJson(Map<String, dynamic> json) =>
       _$WordleeResultFromJson(json);
-}
-
-@Freezed(fromJson: true)
-sealed class WordleeSettings with _$WordleeSettings {
-  const WordleeSettings._();
-
-  factory WordleeSettings.onePlayer({
-    required WordleeTime time,
-    required String answer,
-  }) = WordleeSettings1P;
-
-  // ignore: invalid_annotation_target
-  @JsonSerializable(explicitToJson: true)
-  factory WordleeSettings.twoPlayer({
-    required String id,
-    required bool isHost,
-    required bool hasStarted,
-    required WordleeTime time,
-    required bool hasPlayer2Joined,
-    required String player1Answer,
-    required String player2Answer,
-    required WordleeResult? player1Result,
-    required WordleeResult? player2Result,
-  }) = WordleeSettings2P;
-
-  factory WordleeSettings.fromJson(Map<String, dynamic> json) =>
-      _$WordleeSettingsFromJson(json);
 }
 
 enum WordleeGame2pResult {
@@ -83,7 +68,12 @@ enum WordleeGame2pResult {
   }
 }
 
-extension WordleeSettings2PExt on WordleeSettings2P {
+extension WordleeSession2PExt on WordleeSession2P {
+  bool get isAwaitingPlayer2Data {
+    return answerType.isCustom &&
+        (player1Answer == null || player1Answer!.isEmpty);
+  }
+
   bool get isComplete {
     return player1Result != null && player2Result != null;
   }
@@ -141,6 +131,23 @@ enum WordleeTime {
       WordleeTime.oneMin => '1 min',
       WordleeTime.threeMin => '3 min',
       WordleeTime.fiveMin => '5 min',
+    };
+  }
+}
+
+@JsonEnum()
+enum WordleeAnswerType {
+  random,
+  custom;
+
+  bool get isCustom {
+    return this == WordleeAnswerType.custom;
+  }
+
+  String get label {
+    return switch (this) {
+      WordleeAnswerType.random => 'Random',
+      WordleeAnswerType.custom => 'Custom'
     };
   }
 }

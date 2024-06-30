@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
-import 'package:wordle_vs/model/game_data/wordlee_config.dart';
+import 'package:wordle_vs/model/game_data/wordlee_session.dart';
 import 'package:wordle_vs/model/game_logic/wordlee_game.dart';
 import 'package:wordle_vs/utils/constants.dart';
 import 'package:wordle_vs/utils/duration_extensions.dart';
@@ -15,14 +15,14 @@ class GameScreenBase extends StatefulWidget {
   const GameScreenBase({
     super.key,
     required this.wordlee,
-    required this.settings,
+    required this.session,
     required this.confettiController,
     required this.onResult,
     required this.onShowResults,
   });
 
   final WordleeGame wordlee;
-  final WordleeSettings settings;
+  final WordleeSession session;
   final ConfettiController confettiController;
   final VoidCallback onShowResults;
   final ValueChanged<WordleeResult> onResult;
@@ -37,12 +37,12 @@ class _GameScreenBaseState extends State<GameScreenBase>
 
   bool isFinishedAnimating = false;
 
-  WordleeSettings get settings {
-    return widget.settings;
+  WordleeSession get session {
+    return widget.session;
   }
 
   Duration get duration {
-    return widget.settings.map(
+    return widget.session.map(
       onePlayer: (one) => one.time.duration,
       twoPlayer: (two) => two.time.duration,
     );

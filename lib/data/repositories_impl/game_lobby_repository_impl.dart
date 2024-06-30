@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:wordle_vs/data/repositories/game_lobby_repository.dart';
-import 'package:wordle_vs/model/game_data/wordlee_config.dart';
+import 'package:wordle_vs/model/game_data/wordlee_session.dart';
 import 'package:wordle_vs/utils/functions.dart';
 
 class GameLobbyRepositoryImpl extends GameLobbyRepository {
@@ -9,33 +9,45 @@ class GameLobbyRepositoryImpl extends GameLobbyRepository {
   final FirebaseFirestore db;
 
   @override
-  Stream<WordleeSettings2P> getGameState(String roomID, bool isHost) {
+  Stream<WordleeSession2P> getGameState(String roomID, bool isHost) {
     return db.collection('games').doc(roomID).snapshots().map((snapshot) {
-      return WordleeSettings2P.fromJson(snapshot.data()!).copyWith(
+      return WordleeSession2P.fromJson(snapshot.data()!).copyWith(
         isHost: isHost,
       );
     });
   }
 
   @override
-  Future<WordleeSettings2P> createLobby({required WordleeTime time}) async {
-    final id = await _createNewRoomID();
-    final answer = generateRandomWord();
+  Future<WordleeSession2P> createLobby({
+    required WordleeTime time,
+    required WordleeAnswerType answerType,
+    required String? customAnswer,
+    required String name,
+  }) async {
+    assert(!answerType.isCustom || customAnswer != null);
 
-    final settings = WordleeSettings2P(
+    final id = await _createNewRoomID();
+    final answer = answerType.isCustom
+        ? (customAnswer!).toUpperCase()
+        : generateRandomWord();
+
+    final session = WordleeSession2P(
       id: id,
       isHost: true,
       hasStarted: false,
       hasPlayer2Joined: false,
       time: time,
-      player1Answer: answer,
+      answerType: answerType,
+      player1Answer: answerType.isCustom ? null : answer,
       player2Answer: answer,
+      player1Name: name,
+      player2Name: null,
       player1Result: null,
       player2Result: null,
     );
 
-    await db.collection('games').doc(id).set(settings.toJson());
-    return settings;
+    await db.collection('games').doc(id).set(session.toJson());
+    return session;
   }
 
   Future<String> _createNewRoomID() async {
@@ -50,43 +62,63 @@ class GameLobbyRepositoryImpl extends GameLobbyRepository {
   }
 
   @override
-  Future<WordleeSettings2P?> joinLobby({required String roomID}) async {
+  Future<WordleeSession2P?> joinLobby({
+    required String roomID,
+    required String? name,
+  }) async {
     final response = (await db.collection('games').doc(roomID).get());
     if (!response.exists) {
       return null;
     }
 
-    var settings = WordleeSettings2P.fromJson(response.data()!);
-    if (settings.hasPlayer2Joined) {
+    var session = WordleeSession2P.fromJson(response.data()!);
+    if (session.hasPlayer2Joined) {
       return null;
     }
 
-    settings = settings.copyWith(hasPlayer2Joined: true);
-    await db.collection('games').doc(roomID).set(settings.toJson());
+    session = session.copyWith(
+      hasPlayer2Joined: true,
+      player2Name: name,
+    );
+    await db.collection('games').doc(roomID).set(session.toJson());
 
-    return settings;
+    return session;
   }
 
   @override
-  Future<void> startGame({required WordleeSettings2P settings}) async {
+  Future<WordleeSession2P> submitP2Answer(
+      {required String roomID, required String answer}) async {
+    final response = (await db.collection('games').doc(roomID).get());
+
+    var session = WordleeSession2P.fromJson(response.data()!);
+    session = session.copyWith(
+      player1Answer: answer,
+    );
+    await db.collection('games').doc(roomID).set(session.toJson());
+
+    return session;
+  }
+
+  @override
+  Future<void> startGame({required WordleeSession2P session}) async {
     await db
         .collection('games')
-        .doc(settings.id)
-        .set(settings.copyWith(hasStarted: true).toJson());
+        .doc(session.id)
+        .set(session.copyWith(hasStarted: true).toJson());
   }
 
   @override
   Future<void> submitResults({
-    required WordleeSettings2P settings,
+    required WordleeSession2P session,
     required WordleeResult result,
     required bool isHost,
   }) async {
-    final doc = db.collection('games').doc(settings.id);
+    final doc = db.collection('games').doc(session.id);
 
     if (isHost) {
-      await doc.set(settings.copyWith(player1Result: result).toJson());
+      await doc.set(session.copyWith(player1Result: result).toJson());
     } else {
-      await doc.set(settings.copyWith(player2Result: result).toJson());
+      await doc.set(session.copyWith(player2Result: result).toJson());
     }
   }
 }

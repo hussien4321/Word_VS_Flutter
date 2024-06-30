@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:wordle_vs/model/game_data/wordlee_config.dart';
+import 'package:wordle_vs/model/game_data/wordlee_session.dart';
 import 'package:wordle_vs/model/game_logic/guess.dart';
 import 'package:wordle_vs/utils/constants.dart';
 import 'package:wordle_vs/utils/string_extensions.dart';
@@ -89,7 +89,7 @@ class WordleeGame {
   }
 
   void inputLetter(String letter) {
-    assert(letter.isLetter);
+    assert(letter.isLetterOrSpace);
 
     var currentWord = _currentWord;
     if (currentWord.length < maxWordLength) {
@@ -99,7 +99,7 @@ class WordleeGame {
   }
 
   bool isValidLetter(String letter) {
-    assert(letter.isLetter);
+    assert(letter.isLetterOrSpace);
 
     final hasAnyCorrectGuess =
         _guesses.any((guess) => guess.validLetters.contains(letter));

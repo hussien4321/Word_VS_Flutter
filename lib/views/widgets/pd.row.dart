@@ -5,11 +5,13 @@ class PDRow extends StatelessWidget {
     super.key,
     required this.title,
     required this.content,
+    this.subtitle,
     this.titleStyle,
     this.onTap,
   });
 
   final String title;
+  final String? subtitle;
   final Widget content;
   final TextStyle? titleStyle;
   final VoidCallback? onTap;
@@ -18,15 +20,38 @@ class PDRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      child: Row(
+      child: Column(
         children: [
-          Expanded(
-            child: Text(
-              title,
-              style: titleStyle ?? Theme.of(context).textTheme.bodyLarge,
-            ),
+          Row(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: titleStyle ?? Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ],
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: content,
+                ),
+              ),
+            ],
           ),
-          content,
+          if (subtitle != null)
+            Padding(
+              padding: const EdgeInsets.all(4),
+              child: Text(
+                subtitle!,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.grey.shade700,
+                    ),
+              ),
+            ),
         ],
       ),
     );
