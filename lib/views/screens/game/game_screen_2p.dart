@@ -42,7 +42,7 @@ class GameScreen2p extends StatelessWidget {
   }
 }
 
-class _GameScreen2p extends StatelessWidget {
+class _GameScreen2p extends StatefulWidget {
   _GameScreen2p({
     required this.bloc,
     required this.wordlee,
@@ -50,23 +50,35 @@ class _GameScreen2p extends StatelessWidget {
 
   final Game2pBloc bloc;
   final WordleeGame wordlee;
-  final ConfettiController confettiController = ConfettiController(
-    duration: confettiAnimationDuration,
-  );
+
+  @override
+  State<_GameScreen2p> createState() => _GameScreen2pState();
+}
+
+class _GameScreen2pState extends State<_GameScreen2p> {
+  late final ConfettiController _confettiController;
+
+  @override
+  void initState() {
+    _confettiController = ConfettiController(
+      duration: confettiAnimationDuration,
+    );
+    super.initState();
+  }
 
   WordleeSession2P get session {
-    return bloc.state.session;
+    return widget.bloc.state.session;
   }
 
   _recordResult(WordleeResult result) {
-    bloc.add(
+    widget.bloc.add(
       Game2pEvent.submitResults(results: result),
     );
   }
 
   _showEndGameScreen(BuildContext context) {
     if (session.outcome == WordleeGame2pResult.win) {
-      confettiController.play();
+      _confettiController.play();
     }
     showDialog(
       context: context,
@@ -81,7 +93,7 @@ class _GameScreen2p extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<Game2pBloc, Game2pState>(
-      bloc: bloc,
+      bloc: widget.bloc,
       listenWhen: (before, after) {
         return !before.session.isComplete && after.session.isComplete;
       },
@@ -91,13 +103,13 @@ class _GameScreen2p extends StatelessWidget {
         }
       },
       child: LoadingOverlay(
-        isLoading: !session.isComplete && !wordlee.isInProgress,
+        isLoading: !session.isComplete && !widget.wordlee.isInProgress,
         message: 'Waiting for other player...',
         child: GameScreenBase(
           session: session,
-          wordlee: wordlee,
+          wordlee: widget.wordlee,
           onShowResults: () => _showEndGameScreen(context),
-          confettiController: confettiController,
+          confettiController: _confettiController,
           onResult: _recordResult,
         ),
       ),

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "200439294142",
+    "project_id": "wordlevs",
+    "storage_bucket": "wordlevs.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:200439294142:android:0f67af1d18c1a0dccbd6ef",
+        "android_client_info": {
+          "package_name": "com.example.wordle_vs"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBQDUEUywiM6iVBeF-W2zpcwC3UnEIwDM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
