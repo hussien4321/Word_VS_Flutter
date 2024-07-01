@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:wordle_vs/blocs/pre_game_2p/pre_game_2p_bloc.dart';
 import 'package:wordle_vs/views/screens/game/game_screen_2p.dart';
-import 'package:wordle_vs/views/screens/pre_game_2p/pre_game_2p_mixin.dart';
 import 'package:wordle_vs/views/screens/pre_game_2p/pre_game_2p_views.dart';
 import 'package:wordle_vs/views/widgets/circular_button.dart';
+import 'package:wordle_vs/views/widgets/pre_game_base_mixin.dart';
 import 'package:wordle_vs/views/widgets/yes_no_dialog.dart';
 
 class PreGame2pScreen extends StatelessWidget {
@@ -18,6 +18,7 @@ class PreGame2pScreen extends StatelessWidget {
     return BlocProvider(
       create: (_) => PreGame2pBloc(
         gameLobbyRepository: context.read(),
+        gameSettingsRepository: context.read(),
       ),
       child: BlocBuilder<PreGame2pBloc, PreGame2pState>(
         builder: (ctx, _) {
@@ -30,7 +31,7 @@ class PreGame2pScreen extends StatelessWidget {
   }
 }
 
-class _PreGame2pScreen extends StatelessWidget with PreGame2pMixin {
+class _PreGame2pScreen extends StatelessWidget with PreGameBaseMixin {
   const _PreGame2pScreen({
     required this.bloc,
   });

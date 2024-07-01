@@ -43,7 +43,7 @@ class GameScreen2p extends StatelessWidget {
 }
 
 class _GameScreen2p extends StatefulWidget {
-  _GameScreen2p({
+  const _GameScreen2p({
     required this.bloc,
     required this.wordlee,
   });

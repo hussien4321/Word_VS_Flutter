@@ -4,6 +4,7 @@ import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:wordle_vs/data/repositories/game_lobby_repository.dart';
+import 'package:wordle_vs/data/repositories/game_settings_repository.dart';
 import 'package:wordle_vs/model/game_data/wordlee_session.dart';
 import 'package:wordle_vs/utils/constants.dart';
 import 'package:wordle_vs/utils/string_extensions.dart';
@@ -13,6 +14,7 @@ part 'pre_game_2p_bloc.freezed.dart';
 class PreGame2pBloc extends Bloc<PreGame2pEvent, PreGame2pState> {
   PreGame2pBloc({
     required this.gameLobbyRepository,
+    required this.gameSettingsRepository,
   }) : super(
           PreGame2pState.init(),
         ) {
@@ -33,14 +35,17 @@ class PreGame2pBloc extends Bloc<PreGame2pEvent, PreGame2pState> {
   }
 
   final GameLobbyRepository gameLobbyRepository;
+  final GameSettingsRepository gameSettingsRepository;
+
   StreamSubscription<WordleeSession2P>? _createdLobbySubcription;
   StreamSubscription<WordleeSession2P>? _joinedLobbySubcription;
 
   PreGame2pState get newCreateLobby {
+    final settings = gameSettingsRepository.getSettings();
     return PreGame2pState.newCreateLobby(
-      time: WordleeTime.threeMin,
-      name: '',
-      answerType: WordleeAnswerType.random,
+      time: settings.time,
+      name: settings.playerName,
+      answerType: settings.answerType,
       customAnswer: null,
       isLoading: false,
       errorText: '',
@@ -48,11 +53,12 @@ class PreGame2pBloc extends Bloc<PreGame2pEvent, PreGame2pState> {
   }
 
   PreGame2pState get newJoinLobby {
+    final settings = gameSettingsRepository.getSettings();
     return PreGame2pState.newJoinLobby(
       joinRoomId: '',
       isLoading: false,
       textError: null,
-      name: '',
+      name: settings.playerName,
     );
   }
 
@@ -110,6 +116,7 @@ class PreGame2pBloc extends Bloc<PreGame2pEvent, PreGame2pState> {
     state.whenOrNull<void>(
       newJoinLobby: (a, b, c, d) {
         final (roomID, error) = _validateRoomID(event.roomID);
+
         emit(
           (state as PreGame2pNewJoinLobbyState).copyWith(
             joinRoomId: roomID,
@@ -144,6 +151,13 @@ class PreGame2pBloc extends Bloc<PreGame2pEvent, PreGame2pState> {
 
     emit(createState.copyWith(isLoading: true));
 
+    await gameSettingsRepository.updateSettings((settings) {
+      return settings.copyWith(
+        answerType: createState.answerType,
+        time: createState.time,
+        playerName: createState.name,
+      );
+    });
     final session = await gameLobbyRepository.createLobby(
       time: createState.time,
       name: createState.name,
@@ -184,6 +198,11 @@ class PreGame2pBloc extends Bloc<PreGame2pEvent, PreGame2pState> {
       isLoading: true,
     ));
 
+    await gameSettingsRepository.updateSettings((settings) {
+      return settings.copyWith(
+        playerName: joinState.name,
+      );
+    });
     final session = await gameLobbyRepository.joinLobby(
       roomID: joinState.joinRoomId,
       name: joinState.name,
@@ -220,8 +239,7 @@ class PreGame2pBloc extends Bloc<PreGame2pEvent, PreGame2pState> {
   ) async {
     String answer = event.answer;
     String? errorText;
-    if (answer.length == maxWordLength &&
-        !answer.isValidAnswer) {
+    if (answer.length == maxWordLength && !answer.isValidAnswer) {
       errorText = 'Not a valid word';
     }
 
@@ -335,7 +353,6 @@ class PreGame2pState with _$PreGame2pState {
 
 extension PreGame2pNewCreateLobbyStateExt on PreGame2pNewCreateLobbyState {
   bool get isValid {
-    print('------ answerType:$answerType / custom:$customAnswer ');
     return !answerType.isCustom ||
         (customAnswer != null && customAnswer!.isValidAnswer);
   }
@@ -344,17 +361,14 @@ extension PreGame2pNewCreateLobbyStateExt on PreGame2pNewCreateLobbyState {
 extension PreGame2pNewJoinLobbyStateExt on PreGame2pNewJoinLobbyState {
   bool get isValid {
     if (textError != null) {
-      print('----- error');
       return false;
     }
     if (joinRoomId.length != maxRoomIDLength) {
-      print('----- joinRoomId ${joinRoomId.length}');
       return false;
     }
 
     for (int i = 0; i < joinRoomId.length; i++) {
       if (!alphabet.contains(joinRoomId[i])) {
-        print('----- letter ${joinRoomId[i]}');
         return false;
       }
     }

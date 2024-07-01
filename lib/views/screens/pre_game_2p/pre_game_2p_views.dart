@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:wordle_vs/blocs/pre_game_2p/pre_game_2p_bloc.dart';
 import 'package:wordle_vs/model/game_data/wordlee_session.dart';
 import 'package:wordle_vs/utils/string_extensions.dart';
-import 'package:wordle_vs/views/screens/pre_game_2p/pre_game_2p_mixin.dart';
 import 'package:wordle_vs/views/widgets/pd.row.dart';
+import 'package:wordle_vs/views/widgets/pre_game_base_mixin.dart';
 
 abstract class PreGame2pBaseView<T extends PreGame2pState>
-    extends StatelessWidget with PreGame2pMixin {
+    extends StatelessWidget with PreGameBaseMixin {
   const PreGame2pBaseView({
     super.key,
     required this.state,
@@ -32,17 +32,7 @@ class NewCreateLobbyView extends StatefulWidget {
 }
 
 class _NewCreateLobbyViewState extends State<NewCreateLobbyView>
-    with PreGame2pMixin {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController answerController = TextEditingController();
-
-  @override
-  void dispose() {
-    nameController.dispose();
-    answerController.dispose();
-    super.dispose();
-  }
-
+    with PreGameBaseMixin {
   @override
   Widget build(BuildContext context) {
     return buildPaddedContent(
@@ -63,7 +53,7 @@ class _NewCreateLobbyViewState extends State<NewCreateLobbyView>
           context,
           title: 'Name',
           hint: 'Player 1',
-          controller: nameController,
+          initialValue: widget.state.name,
           onChanged: (newName) {
             widget.bloc.add(
               PreGame2pEvent.updateCreateLobby(
@@ -93,13 +83,12 @@ class _NewCreateLobbyViewState extends State<NewCreateLobbyView>
           const SizedBox(height: 8),
           buildTextField(
             context,
-            title: 'Answer',
+            title: 'Opponent\'s Answer',
             hint: 'ANGEL',
-            subtitle: 'This will be the answer for the other player to guess!',
+            // subtitle: 'This will be the answer for the other player to guess!',
             maxLength: 5,
             textCapitalization: TextCapitalization.characters,
             errorText: widget.state.errorText,
-            controller: nameController,
             onChanged: (newAnswer) {
               widget.bloc.add(
                 PreGame2pEvent.updateCreateLobby(
@@ -260,17 +249,7 @@ class NewJoinLobbyView extends StatefulWidget {
 }
 
 class _NewJoinLobbyViewState extends State<NewJoinLobbyView>
-    with PreGame2pMixin {
-  TextEditingController roomIDController = TextEditingController();
-  TextEditingController nameController = TextEditingController();
-
-  @override
-  void dispose() {
-    roomIDController.dispose();
-    nameController.dispose();
-    super.dispose();
-  }
-
+    with PreGameBaseMixin {
   @override
   Widget build(BuildContext context) {
     return buildPaddedContent(
@@ -280,7 +259,6 @@ class _NewJoinLobbyViewState extends State<NewJoinLobbyView>
           title: 'Room ID',
           hint: 'ABCD',
           errorText: widget.state.textError,
-          controller: roomIDController,
           maxLength: 4,
           textCapitalization: TextCapitalization.characters,
           onChanged: (newID) {
@@ -297,7 +275,7 @@ class _NewJoinLobbyViewState extends State<NewJoinLobbyView>
           context,
           title: 'Name',
           hint: 'Player 2',
-          controller: nameController,
+          initialValue: widget.state.name,
           onChanged: (newName) {
             widget.bloc.add(
               PreGame2pEvent.updateJoinLobby(
@@ -339,7 +317,8 @@ class JoinedLobbyView extends StatefulWidget {
   State<JoinedLobbyView> createState() => _JoinedLobbyViewState();
 }
 
-class _JoinedLobbyViewState extends State<JoinedLobbyView> with PreGame2pMixin {
+class _JoinedLobbyViewState extends State<JoinedLobbyView>
+    with PreGameBaseMixin {
   final TextEditingController controller = TextEditingController();
 
   @override
@@ -460,26 +439,4 @@ class _JoinedLobbyViewState extends State<JoinedLobbyView> with PreGame2pMixin {
       ],
     );
   }
-
-  // Widget _buildRemainingQuestions(BuildContext context) {
-  //   return buildTextField(
-  //     context,
-  //     title: 'Answer',
-  //     hint: 'ANGEL',
-  //     maxLength: 5,
-  //     textCapitalization: TextCapitalization.characters,
-  //     // errorText: widget.state.errorText,
-  //     controller: nameController,
-  //     onChanged: (newAnswer) {
-  //       // widget.bloc.add(
-  //       //   PreGame2pEvent.updateCreateLobby(
-  //       //     time: widget.state.time,
-  //       //     name: widget.state.name,
-  //       //     answer: newAnswer,
-  //       //     answerType: widget.state.answerType,
-  //       //   ),
-  //       // );
-  //     },
-  //   );
-  // }
 }

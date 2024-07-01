@@ -150,4 +150,13 @@ enum WordleeAnswerType {
       WordleeAnswerType.custom => 'Custom'
     };
   }
+
+  String get tooltip {
+    return switch (this) {
+      WordleeAnswerType.random =>
+        'Both players will guess the same random word!',
+      WordleeAnswerType.custom =>
+        'Each player will choose a secret word for their opponent!'
+    };
+  }
 }

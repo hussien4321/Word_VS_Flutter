@@ -4,7 +4,7 @@ import 'package:wordle_vs/views/widgets/pd.row.dart';
 import 'package:wordle_vs/views/widgets/wv.segmented_button.dart';
 import 'package:wordle_vs/views/widgets/wv.text_field.dart';
 
-mixin PreGame2pMixin {
+mixin PreGameBaseMixin {
   Widget buildPaddedContent({required List<Widget> children}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16.0),
@@ -74,7 +74,8 @@ mixin PreGame2pMixin {
     ValueChanged<WordleeAnswerType>? onChanged,
   }) {
     return PDRow(
-      title: 'Answer type',
+      title: 'Game Mode',
+      subtitle: selectedTime.tooltip,
       content: WVSegmentedButton<WordleeAnswerType>(
         segments: WordleeAnswerType.values.map(
           (time) {
@@ -94,8 +95,9 @@ mixin PreGame2pMixin {
     BuildContext context, {
     required String title,
     required String hint,
-    required TextEditingController controller,
+    TextEditingController? controller,
     required ValueChanged<String> onChanged,
+    String? initialValue,
     String? subtitle,
     int? maxLength,
     TextCapitalization? textCapitalization,
@@ -108,6 +110,7 @@ mixin PreGame2pMixin {
       content: SizedBox(
         width: width,
         child: WVTextField(
+          initialValue: initialValue,
           hint: hint,
           errorText: errorText,
           textCapitalization: textCapitalization,
