@@ -37,8 +37,8 @@ class PreGame2pBloc extends Bloc<PreGame2pEvent, PreGame2pState> {
   final GameLobbyRepository gameLobbyRepository;
   final GameSettingsRepository gameSettingsRepository;
 
-  StreamSubscription<WordleeSession2P>? _createdLobbySubcription;
-  StreamSubscription<WordleeSession2P>? _joinedLobbySubcription;
+  StreamSubscription<WordleeSession2P?>? _createdLobbySubcription;
+  StreamSubscription<WordleeSession2P?>? _joinedLobbySubcription;
 
   PreGame2pState get newCreateLobby {
     final settings = gameSettingsRepository.getSettings();
@@ -169,20 +169,25 @@ class PreGame2pBloc extends Bloc<PreGame2pEvent, PreGame2pState> {
     _createdLobbySubcription = gameLobbyRepository
         .getGameState(session.id, true)
         .listen((updatedSettings) {
-      final currentState = state;
-      if (currentState is PreGame2pCreatedLobbyState) {
-        emit(
-          currentState.copyWith(
-            session: updatedSettings,
-          ),
-        );
+      if (updatedSettings == null) {
+        emit(newCreateLobby);
+        _createdLobbySubcription?.cancel();
       } else {
-        emit(
-          PreGame2pState.createdLobby(
-            session: updatedSettings,
-            isLoading: false,
-          ),
-        );
+        final currentState = state;
+        if (currentState is PreGame2pCreatedLobbyState) {
+          emit(
+            currentState.copyWith(
+              session: updatedSettings,
+            ),
+          );
+        } else {
+          emit(
+            PreGame2pState.createdLobby(
+              session: updatedSettings,
+              isLoading: false,
+            ),
+          );
+        }
       }
     });
     await _createdLobbySubcription!.asFuture();
@@ -220,14 +225,19 @@ class PreGame2pBloc extends Bloc<PreGame2pEvent, PreGame2pState> {
       _joinedLobbySubcription = gameLobbyRepository
           .getGameState(session.id, false)
           .listen((updatedSettings) {
-        emit(
-          PreGame2pState.joinedLobby(
-            session: updatedSettings,
-            isLoading: false,
-            errorText: null,
-            customAnswer: null,
-          ),
-        );
+        if (updatedSettings == null) {
+          emit(newJoinLobby);
+          _joinedLobbySubcription?.cancel();
+        } else {
+          emit(
+            PreGame2pState.joinedLobby(
+              session: updatedSettings,
+              isLoading: false,
+              errorText: null,
+              customAnswer: null,
+            ),
+          );
+        }
       });
     }
     await _joinedLobbySubcription!.asFuture();
@@ -308,11 +318,14 @@ class PreGame2pBloc extends Bloc<PreGame2pEvent, PreGame2pState> {
     PreGame2pDisconnectEvent event,
     Emitter<PreGame2pState> emit,
   ) async {
+    final state = this.state;
     if (state is PreGame2pJoinedLobbyState) {
       _joinedLobbySubcription?.cancel();
+      gameLobbyRepository.closeSession(roomID: state.session.id);
       emit(newJoinLobby);
     } else if (state is PreGame2pCreatedLobbyState) {
       _createdLobbySubcription?.cancel();
+      gameLobbyRepository.closeSession(roomID: state.session.id);
       emit(newCreateLobby);
     }
   }

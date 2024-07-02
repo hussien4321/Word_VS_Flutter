@@ -88,18 +88,14 @@ class _PreGame2pScreen extends StatelessWidget with PreGameBaseMixin {
             return false;
           },
           listener: (BuildContext context, PreGame2pState state) {
-            if (state is PreGame2pCreatedLobbyState) {
-              if (state.session.hasStarted) {
-                Get.off(
-                  () => GameScreen2p(session: state.session),
-                );
-              }
-            } else if (state is PreGame2pJoinedLobbyState) {
-              if (state.session.hasStarted) {
-                Get.off(
-                  () => GameScreen2p(session: state.session),
-                );
-              }
+            final session = state.mapOrNull(
+              createdLobby: (lobby) => lobby.session,
+              joinedLobby: (lobby) => lobby.session,
+            );
+            if (session != null && session.hasStarted) {
+              Get.off(
+                () => GameScreen2p(session: session),
+              );
             }
           },
           builder: (ctx, snap) {

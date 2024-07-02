@@ -49,6 +49,7 @@ _$WordleeSession2PImpl _$$WordleeSession2PImplFromJson(
           ? null
           : WordleeResult.fromJson(
               json['player2Result'] as Map<String, dynamic>),
+      createdAt: const TimestampConverter().fromJson(json['createdAt']),
       $type: json['runtimeType'] as String?,
     );
 
@@ -67,6 +68,7 @@ Map<String, dynamic> _$$WordleeSession2PImplToJson(
       'player2Name': instance.player2Name,
       'player1Result': instance.player1Result?.toJson(),
       'player2Result': instance.player2Result?.toJson(),
+      'createdAt': const TimestampConverter().toJson(instance.createdAt),
       'runtimeType': instance.$type,
     };
 

@@ -45,7 +45,8 @@ mixin _$WordleeSession {
             String player1Name,
             String? player2Name,
             WordleeResult? player1Result,
-            WordleeResult? player2Result)
+            WordleeResult? player2Result,
+            @TimestampConverter() DateTime createdAt)
         twoPlayer,
   }) =>
       throw _privateConstructorUsedError;
@@ -64,7 +65,8 @@ mixin _$WordleeSession {
             String player1Name,
             String? player2Name,
             WordleeResult? player1Result,
-            WordleeResult? player2Result)?
+            WordleeResult? player2Result,
+            @TimestampConverter() DateTime createdAt)?
         twoPlayer,
   }) =>
       throw _privateConstructorUsedError;
@@ -83,7 +85,8 @@ mixin _$WordleeSession {
             String player1Name,
             String? player2Name,
             WordleeResult? player1Result,
-            WordleeResult? player2Result)?
+            WordleeResult? player2Result,
+            @TimestampConverter() DateTime createdAt)?
         twoPlayer,
     required TResult orElse(),
   }) =>
@@ -244,7 +247,8 @@ class _$WordleeSession1PImpl extends WordleeSession1P {
             String player1Name,
             String? player2Name,
             WordleeResult? player1Result,
-            WordleeResult? player2Result)
+            WordleeResult? player2Result,
+            @TimestampConverter() DateTime createdAt)
         twoPlayer,
   }) {
     return onePlayer(time, answer);
@@ -266,7 +270,8 @@ class _$WordleeSession1PImpl extends WordleeSession1P {
             String player1Name,
             String? player2Name,
             WordleeResult? player1Result,
-            WordleeResult? player2Result)?
+            WordleeResult? player2Result,
+            @TimestampConverter() DateTime createdAt)?
         twoPlayer,
   }) {
     return onePlayer?.call(time, answer);
@@ -288,7 +293,8 @@ class _$WordleeSession1PImpl extends WordleeSession1P {
             String player1Name,
             String? player2Name,
             WordleeResult? player1Result,
-            WordleeResult? player2Result)?
+            WordleeResult? player2Result,
+            @TimestampConverter() DateTime createdAt)?
         twoPlayer,
     required TResult orElse(),
   }) {
@@ -375,7 +381,8 @@ abstract class _$$WordleeSession2PImplCopyWith<$Res>
       String player1Name,
       String? player2Name,
       WordleeResult? player1Result,
-      WordleeResult? player2Result});
+      WordleeResult? player2Result,
+      @TimestampConverter() DateTime createdAt});
 
   $WordleeResultCopyWith<$Res>? get player1Result;
   $WordleeResultCopyWith<$Res>? get player2Result;
@@ -404,6 +411,7 @@ class __$$WordleeSession2PImplCopyWithImpl<$Res>
     Object? player2Name = freezed,
     Object? player1Result = freezed,
     Object? player2Result = freezed,
+    Object? createdAt = null,
   }) {
     return _then(_$WordleeSession2PImpl(
       id: null == id
@@ -454,6 +462,10 @@ class __$$WordleeSession2PImplCopyWithImpl<$Res>
           ? _value.player2Result
           : player2Result // ignore: cast_nullable_to_non_nullable
               as WordleeResult?,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
     ));
   }
 
@@ -499,6 +511,7 @@ class _$WordleeSession2PImpl extends WordleeSession2P {
       required this.player2Name,
       required this.player1Result,
       required this.player2Result,
+      @TimestampConverter() required this.createdAt,
       final String? $type})
       : $type = $type ?? 'twoPlayer',
         super._();
@@ -530,13 +543,16 @@ class _$WordleeSession2PImpl extends WordleeSession2P {
   final WordleeResult? player1Result;
   @override
   final WordleeResult? player2Result;
+  @override
+  @TimestampConverter()
+  final DateTime createdAt;
 
   @JsonKey(name: 'runtimeType')
   final String $type;
 
   @override
   String toString() {
-    return 'WordleeSession.twoPlayer(id: $id, isHost: $isHost, hasStarted: $hasStarted, time: $time, hasPlayer2Joined: $hasPlayer2Joined, answerType: $answerType, player1Answer: $player1Answer, player2Answer: $player2Answer, player1Name: $player1Name, player2Name: $player2Name, player1Result: $player1Result, player2Result: $player2Result)';
+    return 'WordleeSession.twoPlayer(id: $id, isHost: $isHost, hasStarted: $hasStarted, time: $time, hasPlayer2Joined: $hasPlayer2Joined, answerType: $answerType, player1Answer: $player1Answer, player2Answer: $player2Answer, player1Name: $player1Name, player2Name: $player2Name, player1Result: $player1Result, player2Result: $player2Result, createdAt: $createdAt)';
   }
 
   @override
@@ -564,7 +580,9 @@ class _$WordleeSession2PImpl extends WordleeSession2P {
             (identical(other.player1Result, player1Result) ||
                 other.player1Result == player1Result) &&
             (identical(other.player2Result, player2Result) ||
-                other.player2Result == player2Result));
+                other.player2Result == player2Result) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt));
   }
 
   @JsonKey(ignore: true)
@@ -582,7 +600,8 @@ class _$WordleeSession2PImpl extends WordleeSession2P {
       player1Name,
       player2Name,
       player1Result,
-      player2Result);
+      player2Result,
+      createdAt);
 
   @JsonKey(ignore: true)
   @override
@@ -607,7 +626,8 @@ class _$WordleeSession2PImpl extends WordleeSession2P {
             String player1Name,
             String? player2Name,
             WordleeResult? player1Result,
-            WordleeResult? player2Result)
+            WordleeResult? player2Result,
+            @TimestampConverter() DateTime createdAt)
         twoPlayer,
   }) {
     return twoPlayer(
@@ -622,7 +642,8 @@ class _$WordleeSession2PImpl extends WordleeSession2P {
         player1Name,
         player2Name,
         player1Result,
-        player2Result);
+        player2Result,
+        createdAt);
   }
 
   @override
@@ -641,7 +662,8 @@ class _$WordleeSession2PImpl extends WordleeSession2P {
             String player1Name,
             String? player2Name,
             WordleeResult? player1Result,
-            WordleeResult? player2Result)?
+            WordleeResult? player2Result,
+            @TimestampConverter() DateTime createdAt)?
         twoPlayer,
   }) {
     return twoPlayer?.call(
@@ -656,7 +678,8 @@ class _$WordleeSession2PImpl extends WordleeSession2P {
         player1Name,
         player2Name,
         player1Result,
-        player2Result);
+        player2Result,
+        createdAt);
   }
 
   @override
@@ -675,7 +698,8 @@ class _$WordleeSession2PImpl extends WordleeSession2P {
             String player1Name,
             String? player2Name,
             WordleeResult? player1Result,
-            WordleeResult? player2Result)?
+            WordleeResult? player2Result,
+            @TimestampConverter() DateTime createdAt)?
         twoPlayer,
     required TResult orElse(),
   }) {
@@ -692,7 +716,8 @@ class _$WordleeSession2PImpl extends WordleeSession2P {
           player1Name,
           player2Name,
           player1Result,
-          player2Result);
+          player2Result,
+          createdAt);
     }
     return orElse();
   }
@@ -738,18 +763,20 @@ class _$WordleeSession2PImpl extends WordleeSession2P {
 
 abstract class WordleeSession2P extends WordleeSession {
   factory WordleeSession2P(
-      {required final String id,
-      required final bool isHost,
-      required final bool hasStarted,
-      required final WordleeTime time,
-      required final bool hasPlayer2Joined,
-      required final WordleeAnswerType answerType,
-      required final String? player1Answer,
-      required final String player2Answer,
-      required final String player1Name,
-      required final String? player2Name,
-      required final WordleeResult? player1Result,
-      required final WordleeResult? player2Result}) = _$WordleeSession2PImpl;
+          {required final String id,
+          required final bool isHost,
+          required final bool hasStarted,
+          required final WordleeTime time,
+          required final bool hasPlayer2Joined,
+          required final WordleeAnswerType answerType,
+          required final String? player1Answer,
+          required final String player2Answer,
+          required final String player1Name,
+          required final String? player2Name,
+          required final WordleeResult? player1Result,
+          required final WordleeResult? player2Result,
+          @TimestampConverter() required final DateTime createdAt}) =
+      _$WordleeSession2PImpl;
   WordleeSession2P._() : super._();
 
   factory WordleeSession2P.fromJson(Map<String, dynamic> json) =
@@ -768,6 +795,8 @@ abstract class WordleeSession2P extends WordleeSession {
   String? get player2Name;
   WordleeResult? get player1Result;
   WordleeResult? get player2Result;
+  @TimestampConverter()
+  DateTime get createdAt;
   @override
   @JsonKey(ignore: true)
   _$$WordleeSession2PImplCopyWith<_$WordleeSession2PImpl> get copyWith =>

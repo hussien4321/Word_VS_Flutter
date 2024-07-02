@@ -1,7 +1,7 @@
 import 'package:wordle_vs/model/game_data/wordlee_session.dart';
 
 abstract class GameLobbyRepository {
-  Stream<WordleeSession2P> getGameState(String roomID, bool isHost);
+  Stream<WordleeSession2P?> getGameState(String roomID, bool isHost);
 
   Future<WordleeSession2P> createLobby({
     required WordleeTime time,
@@ -27,4 +27,6 @@ abstract class GameLobbyRepository {
     required WordleeResult result,
     required bool isHost,
   });
+
+  Future<void> closeSession({required String roomID});
 }

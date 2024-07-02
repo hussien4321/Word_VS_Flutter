@@ -7,7 +7,9 @@ import 'package:wordle_vs/model/game_logic/wordlee_game.dart';
 import 'package:wordle_vs/utils/constants.dart';
 import 'package:wordle_vs/views/screens/game/game_screen_base.dart';
 import 'package:wordle_vs/views/screens/game/results_dialog_2p.dart';
+import 'package:wordle_vs/views/widgets/info_dialog.dart';
 import 'package:wordle_vs/views/widgets/loading_overlay.dart';
+import 'package:wordle_vs/views/widgets/yes_no_dialog.dart';
 
 class GameScreen2p extends StatelessWidget {
   GameScreen2p({
@@ -102,15 +104,48 @@ class _GameScreen2pState extends State<_GameScreen2p> {
           _showEndGameScreen(context);
         }
       },
-      child: LoadingOverlay(
-        isLoading: !session.isComplete && !widget.wordlee.isInProgress,
-        message: 'Waiting for other player...',
-        child: GameScreenBase(
-          session: session,
-          wordlee: widget.wordlee,
-          onShowResults: () => _showEndGameScreen(context),
-          confettiController: _confettiController,
-          onResult: _recordResult,
+      child: BlocListener<Game2pBloc, Game2pState>(
+        bloc: widget.bloc,
+        listenWhen: (before, after) {
+          return !before.isCancelled && after.isCancelled;
+        },
+        listener: (context, state) async {
+          if (state.isCancelled) {
+            await showInfoDialog(
+              context,
+              message:
+                  'The other player has left the game, you will now be exited from this game as well.',
+            );
+            if (mounted) {
+              Navigator.pop(context);
+            }
+          }
+        },
+        child: LoadingOverlay(
+          isLoading: !session.isComplete && !widget.wordlee.isInProgress,
+          message: 'Waiting for other player...',
+          child: GameScreenBase(
+              session: session,
+              wordlee: widget.wordlee,
+              onShowResults: () => _showEndGameScreen(context),
+              confettiController: _confettiController,
+              onResult: _recordResult,
+              onClose: () {
+                if (widget.wordlee.isInProgress &&
+                    !widget.bloc.state.isCancelled) {
+                  showYesNoDialog(
+                    context,
+                    title: 'Leave game',
+                    message: 'Are you sure you want to leave this game?',
+                    onYes: () {
+                      widget.bloc.add(Game2pEvent.disconnect());
+                      Navigator.pop(context);
+                    },
+                  );
+                } else {
+                  Navigator.pop(context);
+                }
+              }),
         ),
       ),
     );

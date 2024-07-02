@@ -1,9 +1,10 @@
+import 'dart:async';
+
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:wordle_vs/data/repositories/game_lobby_repository.dart';
 import 'package:wordle_vs/model/game_data/wordlee_session.dart';
-import 'package:wordle_vs/model/game_logic/wordlee_game.dart';
 
 part 'game_2p_bloc.freezed.dart';
 
@@ -15,6 +16,7 @@ class Game2pBloc extends Bloc<Game2pEvent, Game2pState> {
           Game2pState(
             session: session,
             isHost: session.isHost,
+            isCancelled: false,
           ),
         ) {
     on<Game2pConnectEvent>(
@@ -25,21 +27,50 @@ class Game2pBloc extends Bloc<Game2pEvent, Game2pState> {
       _submitResult,
       transformer: restartable(),
     );
+    on<Game2pDisconnectEvent>(
+      _disconnect,
+      transformer: restartable(),
+    );
     add(Game2pEvent.connect());
   }
 
   final GameLobbyRepository gameLobbyRepository;
 
+  StreamSubscription<WordleeSession2P?>? _gameSubscription;
+
   _connect(Game2pConnectEvent event, Emitter<Game2pState> emit) async {
     final session = state.session;
-    return emit.forEach(
-      gameLobbyRepository.getGameState(session.id, state.isHost),
-      onData: (updatedSettings) {
-        return state.copyWith(
-          session: updatedSettings,
-        );
+    _gameSubscription?.cancel();
+    _gameSubscription = gameLobbyRepository
+        .getGameState(
+      session.id,
+      state.isHost,
+    )
+        .listen(
+      (updatedSettings) {
+        if (updatedSettings == null) {
+          emit(
+            Game2pState(
+              session: state.session,
+              isHost: state.isHost,
+              isCancelled: true,
+            ),
+          );
+        } else {
+          emit(
+            state.copyWith(
+              session: updatedSettings,
+            ),
+          );
+        }
       },
     );
+    return _gameSubscription!.asFuture();
+  }
+
+  _disconnect(Game2pDisconnectEvent event, Emitter<Game2pState> emit) async {
+    _gameSubscription?.cancel();
+    gameLobbyRepository.closeSession(roomID: state.session.id);
   }
 
   _submitResult(
@@ -57,14 +88,14 @@ class Game2pState with _$Game2pState {
   factory Game2pState({
     required WordleeSession2P session,
     required bool isHost,
+    required bool isCancelled,
   }) = _Game2pState;
 }
 
 @freezed
 class Game2pEvent with _$Game2pEvent {
   factory Game2pEvent.connect() = Game2pConnectEvent;
-  factory Game2pEvent.updateGame({required WordleeGame wordlee}) =
-      Game2pUpdateGameEvent;
+  factory Game2pEvent.disconnect() = Game2pDisconnectEvent;
 
   factory Game2pEvent.submitResults({
     required WordleeResult results,

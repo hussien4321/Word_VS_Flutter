@@ -18,6 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$Game2pState {
   WordleeSession2P get session => throw _privateConstructorUsedError;
   bool get isHost => throw _privateConstructorUsedError;
+  bool get isCancelled => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $Game2pStateCopyWith<Game2pState> get copyWith =>
@@ -30,7 +31,7 @@ abstract class $Game2pStateCopyWith<$Res> {
           Game2pState value, $Res Function(Game2pState) then) =
       _$Game2pStateCopyWithImpl<$Res, Game2pState>;
   @useResult
-  $Res call({WordleeSession2P session, bool isHost});
+  $Res call({WordleeSession2P session, bool isHost, bool isCancelled});
 }
 
 /// @nodoc
@@ -48,6 +49,7 @@ class _$Game2pStateCopyWithImpl<$Res, $Val extends Game2pState>
   $Res call({
     Object? session = freezed,
     Object? isHost = null,
+    Object? isCancelled = null,
   }) {
     return _then(_value.copyWith(
       session: freezed == session
@@ -57,6 +59,10 @@ class _$Game2pStateCopyWithImpl<$Res, $Val extends Game2pState>
       isHost: null == isHost
           ? _value.isHost
           : isHost // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isCancelled: null == isCancelled
+          ? _value.isCancelled
+          : isCancelled // ignore: cast_nullable_to_non_nullable
               as bool,
     ) as $Val);
   }
@@ -70,7 +76,7 @@ abstract class _$$Game2pStateImplCopyWith<$Res>
       __$$Game2pStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({WordleeSession2P session, bool isHost});
+  $Res call({WordleeSession2P session, bool isHost, bool isCancelled});
 }
 
 /// @nodoc
@@ -86,6 +92,7 @@ class __$$Game2pStateImplCopyWithImpl<$Res>
   $Res call({
     Object? session = freezed,
     Object? isHost = null,
+    Object? isCancelled = null,
   }) {
     return _then(_$Game2pStateImpl(
       session: freezed == session
@@ -96,6 +103,10 @@ class __$$Game2pStateImplCopyWithImpl<$Res>
           ? _value.isHost
           : isHost // ignore: cast_nullable_to_non_nullable
               as bool,
+      isCancelled: null == isCancelled
+          ? _value.isCancelled
+          : isCancelled // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -103,16 +114,19 @@ class __$$Game2pStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$Game2pStateImpl implements _Game2pState {
-  _$Game2pStateImpl({required this.session, required this.isHost});
+  _$Game2pStateImpl(
+      {required this.session, required this.isHost, required this.isCancelled});
 
   @override
   final WordleeSession2P session;
   @override
   final bool isHost;
+  @override
+  final bool isCancelled;
 
   @override
   String toString() {
-    return 'Game2pState(session: $session, isHost: $isHost)';
+    return 'Game2pState(session: $session, isHost: $isHost, isCancelled: $isCancelled)';
   }
 
   @override
@@ -121,12 +135,14 @@ class _$Game2pStateImpl implements _Game2pState {
         (other.runtimeType == runtimeType &&
             other is _$Game2pStateImpl &&
             const DeepCollectionEquality().equals(other.session, session) &&
-            (identical(other.isHost, isHost) || other.isHost == isHost));
+            (identical(other.isHost, isHost) || other.isHost == isHost) &&
+            (identical(other.isCancelled, isCancelled) ||
+                other.isCancelled == isCancelled));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType, const DeepCollectionEquality().hash(session), isHost);
+  int get hashCode => Object.hash(runtimeType,
+      const DeepCollectionEquality().hash(session), isHost, isCancelled);
 
   @JsonKey(ignore: true)
   @override
@@ -138,12 +154,15 @@ class _$Game2pStateImpl implements _Game2pState {
 abstract class _Game2pState implements Game2pState {
   factory _Game2pState(
       {required final WordleeSession2P session,
-      required final bool isHost}) = _$Game2pStateImpl;
+      required final bool isHost,
+      required final bool isCancelled}) = _$Game2pStateImpl;
 
   @override
   WordleeSession2P get session;
   @override
   bool get isHost;
+  @override
+  bool get isCancelled;
   @override
   @JsonKey(ignore: true)
   _$$Game2pStateImplCopyWith<_$Game2pStateImpl> get copyWith =>
@@ -155,21 +174,21 @@ mixin _$Game2pEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() connect,
-    required TResult Function(WordleeGame wordlee) updateGame,
+    required TResult Function() disconnect,
     required TResult Function(WordleeResult results) submitResults,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? connect,
-    TResult? Function(WordleeGame wordlee)? updateGame,
+    TResult? Function()? disconnect,
     TResult? Function(WordleeResult results)? submitResults,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? connect,
-    TResult Function(WordleeGame wordlee)? updateGame,
+    TResult Function()? disconnect,
     TResult Function(WordleeResult results)? submitResults,
     required TResult orElse(),
   }) =>
@@ -177,21 +196,21 @@ mixin _$Game2pEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(Game2pConnectEvent value) connect,
-    required TResult Function(Game2pUpdateGameEvent value) updateGame,
+    required TResult Function(Game2pDisconnectEvent value) disconnect,
     required TResult Function(Game2pSubmitResultsEvent value) submitResults,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(Game2pConnectEvent value)? connect,
-    TResult? Function(Game2pUpdateGameEvent value)? updateGame,
+    TResult? Function(Game2pDisconnectEvent value)? disconnect,
     TResult? Function(Game2pSubmitResultsEvent value)? submitResults,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(Game2pConnectEvent value)? connect,
-    TResult Function(Game2pUpdateGameEvent value)? updateGame,
+    TResult Function(Game2pDisconnectEvent value)? disconnect,
     TResult Function(Game2pSubmitResultsEvent value)? submitResults,
     required TResult orElse(),
   }) =>
@@ -255,7 +274,7 @@ class _$Game2pConnectEventImpl implements Game2pConnectEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() connect,
-    required TResult Function(WordleeGame wordlee) updateGame,
+    required TResult Function() disconnect,
     required TResult Function(WordleeResult results) submitResults,
   }) {
     return connect();
@@ -265,7 +284,7 @@ class _$Game2pConnectEventImpl implements Game2pConnectEvent {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? connect,
-    TResult? Function(WordleeGame wordlee)? updateGame,
+    TResult? Function()? disconnect,
     TResult? Function(WordleeResult results)? submitResults,
   }) {
     return connect?.call();
@@ -275,7 +294,7 @@ class _$Game2pConnectEventImpl implements Game2pConnectEvent {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? connect,
-    TResult Function(WordleeGame wordlee)? updateGame,
+    TResult Function()? disconnect,
     TResult Function(WordleeResult results)? submitResults,
     required TResult orElse(),
   }) {
@@ -289,7 +308,7 @@ class _$Game2pConnectEventImpl implements Game2pConnectEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(Game2pConnectEvent value) connect,
-    required TResult Function(Game2pUpdateGameEvent value) updateGame,
+    required TResult Function(Game2pDisconnectEvent value) disconnect,
     required TResult Function(Game2pSubmitResultsEvent value) submitResults,
   }) {
     return connect(this);
@@ -299,7 +318,7 @@ class _$Game2pConnectEventImpl implements Game2pConnectEvent {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(Game2pConnectEvent value)? connect,
-    TResult? Function(Game2pUpdateGameEvent value)? updateGame,
+    TResult? Function(Game2pDisconnectEvent value)? disconnect,
     TResult? Function(Game2pSubmitResultsEvent value)? submitResults,
   }) {
     return connect?.call(this);
@@ -309,7 +328,7 @@ class _$Game2pConnectEventImpl implements Game2pConnectEvent {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(Game2pConnectEvent value)? connect,
-    TResult Function(Game2pUpdateGameEvent value)? updateGame,
+    TResult Function(Game2pDisconnectEvent value)? disconnect,
     TResult Function(Game2pSubmitResultsEvent value)? submitResults,
     required TResult orElse(),
   }) {
@@ -325,98 +344,72 @@ abstract class Game2pConnectEvent implements Game2pEvent {
 }
 
 /// @nodoc
-abstract class _$$Game2pUpdateGameEventImplCopyWith<$Res> {
-  factory _$$Game2pUpdateGameEventImplCopyWith(
-          _$Game2pUpdateGameEventImpl value,
-          $Res Function(_$Game2pUpdateGameEventImpl) then) =
-      __$$Game2pUpdateGameEventImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({WordleeGame wordlee});
+abstract class _$$Game2pDisconnectEventImplCopyWith<$Res> {
+  factory _$$Game2pDisconnectEventImplCopyWith(
+          _$Game2pDisconnectEventImpl value,
+          $Res Function(_$Game2pDisconnectEventImpl) then) =
+      __$$Game2pDisconnectEventImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$Game2pUpdateGameEventImplCopyWithImpl<$Res>
-    extends _$Game2pEventCopyWithImpl<$Res, _$Game2pUpdateGameEventImpl>
-    implements _$$Game2pUpdateGameEventImplCopyWith<$Res> {
-  __$$Game2pUpdateGameEventImplCopyWithImpl(_$Game2pUpdateGameEventImpl _value,
-      $Res Function(_$Game2pUpdateGameEventImpl) _then)
+class __$$Game2pDisconnectEventImplCopyWithImpl<$Res>
+    extends _$Game2pEventCopyWithImpl<$Res, _$Game2pDisconnectEventImpl>
+    implements _$$Game2pDisconnectEventImplCopyWith<$Res> {
+  __$$Game2pDisconnectEventImplCopyWithImpl(_$Game2pDisconnectEventImpl _value,
+      $Res Function(_$Game2pDisconnectEventImpl) _then)
       : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? wordlee = null,
-  }) {
-    return _then(_$Game2pUpdateGameEventImpl(
-      wordlee: null == wordlee
-          ? _value.wordlee
-          : wordlee // ignore: cast_nullable_to_non_nullable
-              as WordleeGame,
-    ));
-  }
 }
 
 /// @nodoc
 
-class _$Game2pUpdateGameEventImpl implements Game2pUpdateGameEvent {
-  _$Game2pUpdateGameEventImpl({required this.wordlee});
-
-  @override
-  final WordleeGame wordlee;
+class _$Game2pDisconnectEventImpl implements Game2pDisconnectEvent {
+  _$Game2pDisconnectEventImpl();
 
   @override
   String toString() {
-    return 'Game2pEvent.updateGame(wordlee: $wordlee)';
+    return 'Game2pEvent.disconnect()';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$Game2pUpdateGameEventImpl &&
-            (identical(other.wordlee, wordlee) || other.wordlee == wordlee));
+            other is _$Game2pDisconnectEventImpl);
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, wordlee);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$Game2pUpdateGameEventImplCopyWith<_$Game2pUpdateGameEventImpl>
-      get copyWith => __$$Game2pUpdateGameEventImplCopyWithImpl<
-          _$Game2pUpdateGameEventImpl>(this, _$identity);
+  int get hashCode => runtimeType.hashCode;
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() connect,
-    required TResult Function(WordleeGame wordlee) updateGame,
+    required TResult Function() disconnect,
     required TResult Function(WordleeResult results) submitResults,
   }) {
-    return updateGame(wordlee);
+    return disconnect();
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? connect,
-    TResult? Function(WordleeGame wordlee)? updateGame,
+    TResult? Function()? disconnect,
     TResult? Function(WordleeResult results)? submitResults,
   }) {
-    return updateGame?.call(wordlee);
+    return disconnect?.call();
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? connect,
-    TResult Function(WordleeGame wordlee)? updateGame,
+    TResult Function()? disconnect,
     TResult Function(WordleeResult results)? submitResults,
     required TResult orElse(),
   }) {
-    if (updateGame != null) {
-      return updateGame(wordlee);
+    if (disconnect != null) {
+      return disconnect();
     }
     return orElse();
   }
@@ -425,45 +418,39 @@ class _$Game2pUpdateGameEventImpl implements Game2pUpdateGameEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(Game2pConnectEvent value) connect,
-    required TResult Function(Game2pUpdateGameEvent value) updateGame,
+    required TResult Function(Game2pDisconnectEvent value) disconnect,
     required TResult Function(Game2pSubmitResultsEvent value) submitResults,
   }) {
-    return updateGame(this);
+    return disconnect(this);
   }
 
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(Game2pConnectEvent value)? connect,
-    TResult? Function(Game2pUpdateGameEvent value)? updateGame,
+    TResult? Function(Game2pDisconnectEvent value)? disconnect,
     TResult? Function(Game2pSubmitResultsEvent value)? submitResults,
   }) {
-    return updateGame?.call(this);
+    return disconnect?.call(this);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(Game2pConnectEvent value)? connect,
-    TResult Function(Game2pUpdateGameEvent value)? updateGame,
+    TResult Function(Game2pDisconnectEvent value)? disconnect,
     TResult Function(Game2pSubmitResultsEvent value)? submitResults,
     required TResult orElse(),
   }) {
-    if (updateGame != null) {
-      return updateGame(this);
+    if (disconnect != null) {
+      return disconnect(this);
     }
     return orElse();
   }
 }
 
-abstract class Game2pUpdateGameEvent implements Game2pEvent {
-  factory Game2pUpdateGameEvent({required final WordleeGame wordlee}) =
-      _$Game2pUpdateGameEventImpl;
-
-  WordleeGame get wordlee;
-  @JsonKey(ignore: true)
-  _$$Game2pUpdateGameEventImplCopyWith<_$Game2pUpdateGameEventImpl>
-      get copyWith => throw _privateConstructorUsedError;
+abstract class Game2pDisconnectEvent implements Game2pEvent {
+  factory Game2pDisconnectEvent() = _$Game2pDisconnectEventImpl;
 }
 
 /// @nodoc
@@ -544,7 +531,7 @@ class _$Game2pSubmitResultsEventImpl implements Game2pSubmitResultsEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() connect,
-    required TResult Function(WordleeGame wordlee) updateGame,
+    required TResult Function() disconnect,
     required TResult Function(WordleeResult results) submitResults,
   }) {
     return submitResults(results);
@@ -554,7 +541,7 @@ class _$Game2pSubmitResultsEventImpl implements Game2pSubmitResultsEvent {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? connect,
-    TResult? Function(WordleeGame wordlee)? updateGame,
+    TResult? Function()? disconnect,
     TResult? Function(WordleeResult results)? submitResults,
   }) {
     return submitResults?.call(results);
@@ -564,7 +551,7 @@ class _$Game2pSubmitResultsEventImpl implements Game2pSubmitResultsEvent {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? connect,
-    TResult Function(WordleeGame wordlee)? updateGame,
+    TResult Function()? disconnect,
     TResult Function(WordleeResult results)? submitResults,
     required TResult orElse(),
   }) {
@@ -578,7 +565,7 @@ class _$Game2pSubmitResultsEventImpl implements Game2pSubmitResultsEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(Game2pConnectEvent value) connect,
-    required TResult Function(Game2pUpdateGameEvent value) updateGame,
+    required TResult Function(Game2pDisconnectEvent value) disconnect,
     required TResult Function(Game2pSubmitResultsEvent value) submitResults,
   }) {
     return submitResults(this);
@@ -588,7 +575,7 @@ class _$Game2pSubmitResultsEventImpl implements Game2pSubmitResultsEvent {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(Game2pConnectEvent value)? connect,
-    TResult? Function(Game2pUpdateGameEvent value)? updateGame,
+    TResult? Function(Game2pDisconnectEvent value)? disconnect,
     TResult? Function(Game2pSubmitResultsEvent value)? submitResults,
   }) {
     return submitResults?.call(this);
@@ -598,7 +585,7 @@ class _$Game2pSubmitResultsEventImpl implements Game2pSubmitResultsEvent {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(Game2pConnectEvent value)? connect,
-    TResult Function(Game2pUpdateGameEvent value)? updateGame,
+    TResult Function(Game2pDisconnectEvent value)? disconnect,
     TResult Function(Game2pSubmitResultsEvent value)? submitResults,
     required TResult orElse(),
   }) {

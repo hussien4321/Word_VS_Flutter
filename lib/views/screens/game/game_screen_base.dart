@@ -19,6 +19,7 @@ class GameScreenBase extends StatefulWidget {
     required this.confettiController,
     required this.onResult,
     required this.onShowResults,
+    required this.onClose,
   });
 
   final WordleeGame wordlee;
@@ -26,6 +27,7 @@ class GameScreenBase extends StatefulWidget {
   final ConfettiController confettiController;
   final VoidCallback onShowResults;
   final ValueChanged<WordleeResult> onResult;
+  final VoidCallback onClose;
 
   @override
   State<GameScreenBase> createState() => _GameScreenBaseState();
@@ -102,9 +104,7 @@ class _GameScreenBaseState extends State<GameScreenBase>
           appBar: AppBar(
             leading: IconButton(
               icon: const Icon(Icons.close),
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              onPressed: widget.onClose,
             ),
           ),
           body: _buildBody(context),

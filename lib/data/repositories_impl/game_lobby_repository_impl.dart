@@ -9,11 +9,15 @@ class GameLobbyRepositoryImpl extends GameLobbyRepository {
   final FirebaseFirestore db;
 
   @override
-  Stream<WordleeSession2P> getGameState(String roomID, bool isHost) {
+  Stream<WordleeSession2P?> getGameState(String roomID, bool isHost) {
     return db.collection('games').doc(roomID).snapshots().map((snapshot) {
-      return WordleeSession2P.fromJson(snapshot.data()!).copyWith(
-        isHost: isHost,
-      );
+      if (!snapshot.exists) {
+        return null;
+      } else {
+        return WordleeSession2P.fromJson(snapshot.data()!).copyWith(
+          isHost: isHost,
+        );
+      }
     });
   }
 
@@ -44,6 +48,7 @@ class GameLobbyRepositoryImpl extends GameLobbyRepository {
       player2Name: null,
       player1Result: null,
       player2Result: null,
+      createdAt: DateTime.now().toUtc(),
     );
 
     await db.collection('games').doc(id).set(session.toJson());
@@ -120,5 +125,12 @@ class GameLobbyRepositoryImpl extends GameLobbyRepository {
     } else {
       await doc.set(session.copyWith(player2Result: result).toJson());
     }
+  }
+
+  @override
+  Future<void> closeSession({
+    required String roomID,
+  }) async {
+    db.collection('games').doc(roomID).delete();
   }
 }

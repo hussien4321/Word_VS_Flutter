@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
-import 'package:wordle_vs/utils/snackbar.dart';
 import 'package:wordle_vs/views/screens/pre_game_1p/pre_game_1p_screen.dart';
 import 'package:wordle_vs/views/screens/pre_game_2p/pre_game_2p_screen.dart';
 import 'package:wordle_vs/views/widgets/circular_button.dart';
@@ -13,7 +12,7 @@ class MenuScreen extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text('Wordl VS'),
+        title: const Text('WordlVS'),
         centerTitle: true,
       ),
       body: Column(
@@ -56,22 +55,22 @@ class MenuScreen extends StatelessWidget {
               },
             ),
           ),
-          Expanded(
-            child: CircularButton(
-              icon: const Icon(Icons.settings),
-              title: 'Settings',
-              colors: [
-                Colors.grey.shade700,
-                Colors.grey,
-              ],
-              onTap: () {
-                quickSnackbar(
-                  "In progress",
-                  "Come back later",
-                );
-              },
-            ),
-          ),
+          // Expanded(
+          //   child: CircularButton(
+          //     icon: const Icon(Icons.settings),
+          //     title: 'Settings',
+          //     colors: [
+          //       Colors.grey.shade700,
+          //       Colors.grey,
+          //     ],
+          //     onTap: () {
+          //       quickSnackbar(
+          //         "In progress",
+          //         "Come back later",
+          //       );
+          //     },
+          //   ),
+          // ),
         ],
       ),
     );

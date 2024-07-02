@@ -50,6 +50,9 @@ class GameScreen1p extends StatelessWidget {
       },
       onShowResults: () => _showEndGameScreen(context),
       confettiController: confettiController,
+      onClose: () {
+        Navigator.pop(context);
+      },
     );
   }
 }

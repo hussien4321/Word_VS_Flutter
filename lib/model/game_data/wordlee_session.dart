@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:wordle_vs/model/converters/timestamp_converter.dart';
 
 part 'wordlee_session.freezed.dart';
 part 'wordlee_session.g.dart';
@@ -27,6 +28,7 @@ sealed class WordleeSession with _$WordleeSession {
     required String? player2Name,
     required WordleeResult? player1Result,
     required WordleeResult? player2Result,
+    @TimestampConverter() required DateTime createdAt,
   }) = WordleeSession2P;
 
   factory WordleeSession.fromJson(Map<String, dynamic> json) =>
