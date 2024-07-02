@@ -18,7 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$PreGame2pState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() init,
+    required TResult Function(bool hasError) init,
     required TResult Function(
             WordleeTime time,
             String name,
@@ -39,7 +39,7 @@ mixin _$PreGame2pState {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? init,
+    TResult? Function(bool hasError)? init,
     TResult? Function(
             WordleeTime time,
             String name,
@@ -59,7 +59,7 @@ mixin _$PreGame2pState {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? init,
+    TResult Function(bool hasError)? init,
     TResult Function(
             WordleeTime time,
             String name,
@@ -132,6 +132,8 @@ abstract class _$$PreGame2pInitStateImplCopyWith<$Res> {
   factory _$$PreGame2pInitStateImplCopyWith(_$PreGame2pInitStateImpl value,
           $Res Function(_$PreGame2pInitStateImpl) then) =
       __$$PreGame2pInitStateImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({bool hasError});
 }
 
 /// @nodoc
@@ -141,31 +143,57 @@ class __$$PreGame2pInitStateImplCopyWithImpl<$Res>
   __$$PreGame2pInitStateImplCopyWithImpl(_$PreGame2pInitStateImpl _value,
       $Res Function(_$PreGame2pInitStateImpl) _then)
       : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? hasError = null,
+  }) {
+    return _then(_$PreGame2pInitStateImpl(
+      hasError: null == hasError
+          ? _value.hasError
+          : hasError // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
 }
 
 /// @nodoc
 
 class _$PreGame2pInitStateImpl implements PreGame2pInitState {
-  _$PreGame2pInitStateImpl();
+  _$PreGame2pInitStateImpl({required this.hasError});
+
+  @override
+  final bool hasError;
 
   @override
   String toString() {
-    return 'PreGame2pState.init()';
+    return 'PreGame2pState.init(hasError: $hasError)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$PreGame2pInitStateImpl);
+        (other.runtimeType == runtimeType &&
+            other is _$PreGame2pInitStateImpl &&
+            (identical(other.hasError, hasError) ||
+                other.hasError == hasError));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, hasError);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$PreGame2pInitStateImplCopyWith<_$PreGame2pInitStateImpl> get copyWith =>
+      __$$PreGame2pInitStateImplCopyWithImpl<_$PreGame2pInitStateImpl>(
+          this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() init,
+    required TResult Function(bool hasError) init,
     required TResult Function(
             WordleeTime time,
             String name,
@@ -183,13 +211,13 @@ class _$PreGame2pInitStateImpl implements PreGame2pInitState {
             String? customAnswer, String? errorText)
         joinedLobby,
   }) {
-    return init();
+    return init(hasError);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? init,
+    TResult? Function(bool hasError)? init,
     TResult? Function(
             WordleeTime time,
             String name,
@@ -206,13 +234,13 @@ class _$PreGame2pInitStateImpl implements PreGame2pInitState {
             String? customAnswer, String? errorText)?
         joinedLobby,
   }) {
-    return init?.call();
+    return init?.call(hasError);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? init,
+    TResult Function(bool hasError)? init,
     TResult Function(
             WordleeTime time,
             String name,
@@ -231,7 +259,7 @@ class _$PreGame2pInitStateImpl implements PreGame2pInitState {
     required TResult orElse(),
   }) {
     if (init != null) {
-      return init();
+      return init(hasError);
     }
     return orElse();
   }
@@ -279,7 +307,13 @@ class _$PreGame2pInitStateImpl implements PreGame2pInitState {
 }
 
 abstract class PreGame2pInitState implements PreGame2pState {
-  factory PreGame2pInitState() = _$PreGame2pInitStateImpl;
+  factory PreGame2pInitState({required final bool hasError}) =
+      _$PreGame2pInitStateImpl;
+
+  bool get hasError;
+  @JsonKey(ignore: true)
+  _$$PreGame2pInitStateImplCopyWith<_$PreGame2pInitStateImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -409,7 +443,7 @@ class _$PreGame2pNewCreateLobbyStateImpl
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() init,
+    required TResult Function(bool hasError) init,
     required TResult Function(
             WordleeTime time,
             String name,
@@ -434,7 +468,7 @@ class _$PreGame2pNewCreateLobbyStateImpl
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? init,
+    TResult? Function(bool hasError)? init,
     TResult? Function(
             WordleeTime time,
             String name,
@@ -458,7 +492,7 @@ class _$PreGame2pNewCreateLobbyStateImpl
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? init,
+    TResult Function(bool hasError)? init,
     TResult Function(
             WordleeTime time,
             String name,
@@ -624,7 +658,7 @@ class _$PreGame2pCreatedLobbyStateImpl implements PreGame2pCreatedLobbyState {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() init,
+    required TResult Function(bool hasError) init,
     required TResult Function(
             WordleeTime time,
             String name,
@@ -648,7 +682,7 @@ class _$PreGame2pCreatedLobbyStateImpl implements PreGame2pCreatedLobbyState {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? init,
+    TResult? Function(bool hasError)? init,
     TResult? Function(
             WordleeTime time,
             String name,
@@ -671,7 +705,7 @@ class _$PreGame2pCreatedLobbyStateImpl implements PreGame2pCreatedLobbyState {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? init,
+    TResult Function(bool hasError)? init,
     TResult Function(
             WordleeTime time,
             String name,
@@ -849,7 +883,7 @@ class _$PreGame2pNewJoinLobbyStateImpl implements PreGame2pNewJoinLobbyState {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() init,
+    required TResult Function(bool hasError) init,
     required TResult Function(
             WordleeTime time,
             String name,
@@ -873,7 +907,7 @@ class _$PreGame2pNewJoinLobbyStateImpl implements PreGame2pNewJoinLobbyState {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? init,
+    TResult? Function(bool hasError)? init,
     TResult? Function(
             WordleeTime time,
             String name,
@@ -896,7 +930,7 @@ class _$PreGame2pNewJoinLobbyStateImpl implements PreGame2pNewJoinLobbyState {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? init,
+    TResult Function(bool hasError)? init,
     TResult Function(
             WordleeTime time,
             String name,
@@ -1085,7 +1119,7 @@ class _$PreGame2pJoinedLobbyStateImpl implements PreGame2pJoinedLobbyState {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() init,
+    required TResult Function(bool hasError) init,
     required TResult Function(
             WordleeTime time,
             String name,
@@ -1109,7 +1143,7 @@ class _$PreGame2pJoinedLobbyStateImpl implements PreGame2pJoinedLobbyState {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? init,
+    TResult? Function(bool hasError)? init,
     TResult? Function(
             WordleeTime time,
             String name,
@@ -1132,7 +1166,7 @@ class _$PreGame2pJoinedLobbyStateImpl implements PreGame2pJoinedLobbyState {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? init,
+    TResult Function(bool hasError)? init,
     TResult Function(
             WordleeTime time,
             String name,
@@ -1232,6 +1266,7 @@ mixin _$PreGame2pEvent {
     required TResult Function(PreGame2pCreatedLobbyState state) startGame,
     required TResult Function() popToStart,
     required TResult Function() disconnect,
+    required TResult Function() error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -1249,6 +1284,7 @@ mixin _$PreGame2pEvent {
     TResult? Function(PreGame2pCreatedLobbyState state)? startGame,
     TResult? Function()? popToStart,
     TResult? Function()? disconnect,
+    TResult? Function()? error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -1266,6 +1302,7 @@ mixin _$PreGame2pEvent {
     TResult Function(PreGame2pCreatedLobbyState state)? startGame,
     TResult Function()? popToStart,
     TResult Function()? disconnect,
+    TResult Function()? error,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -1285,6 +1322,7 @@ mixin _$PreGame2pEvent {
     required TResult Function(PreGame2pStartGameEvent value) startGame,
     required TResult Function(PreGame2pPopToStartEvent value) popToStart,
     required TResult Function(PreGame2pDisconnectEvent value) disconnect,
+    required TResult Function(PreGame2pErrorEvent value) error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -1300,6 +1338,7 @@ mixin _$PreGame2pEvent {
     TResult? Function(PreGame2pStartGameEvent value)? startGame,
     TResult? Function(PreGame2pPopToStartEvent value)? popToStart,
     TResult? Function(PreGame2pDisconnectEvent value)? disconnect,
+    TResult? Function(PreGame2pErrorEvent value)? error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -1315,6 +1354,7 @@ mixin _$PreGame2pEvent {
     TResult Function(PreGame2pStartGameEvent value)? startGame,
     TResult Function(PreGame2pPopToStartEvent value)? popToStart,
     TResult Function(PreGame2pDisconnectEvent value)? disconnect,
+    TResult Function(PreGame2pErrorEvent value)? error,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -1420,6 +1460,7 @@ class _$PreGame2pSelectModeEventImpl implements PreGame2pSelectModeEvent {
     required TResult Function(PreGame2pCreatedLobbyState state) startGame,
     required TResult Function() popToStart,
     required TResult Function() disconnect,
+    required TResult Function() error,
   }) {
     return selectMode(isCreating);
   }
@@ -1440,6 +1481,7 @@ class _$PreGame2pSelectModeEventImpl implements PreGame2pSelectModeEvent {
     TResult? Function(PreGame2pCreatedLobbyState state)? startGame,
     TResult? Function()? popToStart,
     TResult? Function()? disconnect,
+    TResult? Function()? error,
   }) {
     return selectMode?.call(isCreating);
   }
@@ -1460,6 +1502,7 @@ class _$PreGame2pSelectModeEventImpl implements PreGame2pSelectModeEvent {
     TResult Function(PreGame2pCreatedLobbyState state)? startGame,
     TResult Function()? popToStart,
     TResult Function()? disconnect,
+    TResult Function()? error,
     required TResult orElse(),
   }) {
     if (selectMode != null) {
@@ -1485,6 +1528,7 @@ class _$PreGame2pSelectModeEventImpl implements PreGame2pSelectModeEvent {
     required TResult Function(PreGame2pStartGameEvent value) startGame,
     required TResult Function(PreGame2pPopToStartEvent value) popToStart,
     required TResult Function(PreGame2pDisconnectEvent value) disconnect,
+    required TResult Function(PreGame2pErrorEvent value) error,
   }) {
     return selectMode(this);
   }
@@ -1503,6 +1547,7 @@ class _$PreGame2pSelectModeEventImpl implements PreGame2pSelectModeEvent {
     TResult? Function(PreGame2pStartGameEvent value)? startGame,
     TResult? Function(PreGame2pPopToStartEvent value)? popToStart,
     TResult? Function(PreGame2pDisconnectEvent value)? disconnect,
+    TResult? Function(PreGame2pErrorEvent value)? error,
   }) {
     return selectMode?.call(this);
   }
@@ -1521,6 +1566,7 @@ class _$PreGame2pSelectModeEventImpl implements PreGame2pSelectModeEvent {
     TResult Function(PreGame2pStartGameEvent value)? startGame,
     TResult Function(PreGame2pPopToStartEvent value)? popToStart,
     TResult Function(PreGame2pDisconnectEvent value)? disconnect,
+    TResult Function(PreGame2pErrorEvent value)? error,
     required TResult orElse(),
   }) {
     if (selectMode != null) {
@@ -1657,6 +1703,7 @@ class _$PreGame2pUpdateCreateLobbyEventImpl
     required TResult Function(PreGame2pCreatedLobbyState state) startGame,
     required TResult Function() popToStart,
     required TResult Function() disconnect,
+    required TResult Function() error,
   }) {
     return updateCreateLobby(time, name, answerType, answer);
   }
@@ -1677,6 +1724,7 @@ class _$PreGame2pUpdateCreateLobbyEventImpl
     TResult? Function(PreGame2pCreatedLobbyState state)? startGame,
     TResult? Function()? popToStart,
     TResult? Function()? disconnect,
+    TResult? Function()? error,
   }) {
     return updateCreateLobby?.call(time, name, answerType, answer);
   }
@@ -1697,6 +1745,7 @@ class _$PreGame2pUpdateCreateLobbyEventImpl
     TResult Function(PreGame2pCreatedLobbyState state)? startGame,
     TResult Function()? popToStart,
     TResult Function()? disconnect,
+    TResult Function()? error,
     required TResult orElse(),
   }) {
     if (updateCreateLobby != null) {
@@ -1722,6 +1771,7 @@ class _$PreGame2pUpdateCreateLobbyEventImpl
     required TResult Function(PreGame2pStartGameEvent value) startGame,
     required TResult Function(PreGame2pPopToStartEvent value) popToStart,
     required TResult Function(PreGame2pDisconnectEvent value) disconnect,
+    required TResult Function(PreGame2pErrorEvent value) error,
   }) {
     return updateCreateLobby(this);
   }
@@ -1740,6 +1790,7 @@ class _$PreGame2pUpdateCreateLobbyEventImpl
     TResult? Function(PreGame2pStartGameEvent value)? startGame,
     TResult? Function(PreGame2pPopToStartEvent value)? popToStart,
     TResult? Function(PreGame2pDisconnectEvent value)? disconnect,
+    TResult? Function(PreGame2pErrorEvent value)? error,
   }) {
     return updateCreateLobby?.call(this);
   }
@@ -1758,6 +1809,7 @@ class _$PreGame2pUpdateCreateLobbyEventImpl
     TResult Function(PreGame2pStartGameEvent value)? startGame,
     TResult Function(PreGame2pPopToStartEvent value)? popToStart,
     TResult Function(PreGame2pDisconnectEvent value)? disconnect,
+    TResult Function(PreGame2pErrorEvent value)? error,
     required TResult orElse(),
   }) {
     if (updateCreateLobby != null) {
@@ -1877,6 +1929,7 @@ class _$PreGame2pUpdateJoinLobbyEventImpl
     required TResult Function(PreGame2pCreatedLobbyState state) startGame,
     required TResult Function() popToStart,
     required TResult Function() disconnect,
+    required TResult Function() error,
   }) {
     return updateJoinLobby(roomID, name);
   }
@@ -1897,6 +1950,7 @@ class _$PreGame2pUpdateJoinLobbyEventImpl
     TResult? Function(PreGame2pCreatedLobbyState state)? startGame,
     TResult? Function()? popToStart,
     TResult? Function()? disconnect,
+    TResult? Function()? error,
   }) {
     return updateJoinLobby?.call(roomID, name);
   }
@@ -1917,6 +1971,7 @@ class _$PreGame2pUpdateJoinLobbyEventImpl
     TResult Function(PreGame2pCreatedLobbyState state)? startGame,
     TResult Function()? popToStart,
     TResult Function()? disconnect,
+    TResult Function()? error,
     required TResult orElse(),
   }) {
     if (updateJoinLobby != null) {
@@ -1942,6 +1997,7 @@ class _$PreGame2pUpdateJoinLobbyEventImpl
     required TResult Function(PreGame2pStartGameEvent value) startGame,
     required TResult Function(PreGame2pPopToStartEvent value) popToStart,
     required TResult Function(PreGame2pDisconnectEvent value) disconnect,
+    required TResult Function(PreGame2pErrorEvent value) error,
   }) {
     return updateJoinLobby(this);
   }
@@ -1960,6 +2016,7 @@ class _$PreGame2pUpdateJoinLobbyEventImpl
     TResult? Function(PreGame2pStartGameEvent value)? startGame,
     TResult? Function(PreGame2pPopToStartEvent value)? popToStart,
     TResult? Function(PreGame2pDisconnectEvent value)? disconnect,
+    TResult? Function(PreGame2pErrorEvent value)? error,
   }) {
     return updateJoinLobby?.call(this);
   }
@@ -1978,6 +2035,7 @@ class _$PreGame2pUpdateJoinLobbyEventImpl
     TResult Function(PreGame2pStartGameEvent value)? startGame,
     TResult Function(PreGame2pPopToStartEvent value)? popToStart,
     TResult Function(PreGame2pDisconnectEvent value)? disconnect,
+    TResult Function(PreGame2pErrorEvent value)? error,
     required TResult orElse(),
   }) {
     if (updateJoinLobby != null) {
@@ -2082,6 +2140,7 @@ class _$PreGame2pCreateLobbyEventImpl implements PreGame2pCreateLobbyEvent {
     required TResult Function(PreGame2pCreatedLobbyState state) startGame,
     required TResult Function() popToStart,
     required TResult Function() disconnect,
+    required TResult Function() error,
   }) {
     return createLobby(state);
   }
@@ -2102,6 +2161,7 @@ class _$PreGame2pCreateLobbyEventImpl implements PreGame2pCreateLobbyEvent {
     TResult? Function(PreGame2pCreatedLobbyState state)? startGame,
     TResult? Function()? popToStart,
     TResult? Function()? disconnect,
+    TResult? Function()? error,
   }) {
     return createLobby?.call(state);
   }
@@ -2122,6 +2182,7 @@ class _$PreGame2pCreateLobbyEventImpl implements PreGame2pCreateLobbyEvent {
     TResult Function(PreGame2pCreatedLobbyState state)? startGame,
     TResult Function()? popToStart,
     TResult Function()? disconnect,
+    TResult Function()? error,
     required TResult orElse(),
   }) {
     if (createLobby != null) {
@@ -2147,6 +2208,7 @@ class _$PreGame2pCreateLobbyEventImpl implements PreGame2pCreateLobbyEvent {
     required TResult Function(PreGame2pStartGameEvent value) startGame,
     required TResult Function(PreGame2pPopToStartEvent value) popToStart,
     required TResult Function(PreGame2pDisconnectEvent value) disconnect,
+    required TResult Function(PreGame2pErrorEvent value) error,
   }) {
     return createLobby(this);
   }
@@ -2165,6 +2227,7 @@ class _$PreGame2pCreateLobbyEventImpl implements PreGame2pCreateLobbyEvent {
     TResult? Function(PreGame2pStartGameEvent value)? startGame,
     TResult? Function(PreGame2pPopToStartEvent value)? popToStart,
     TResult? Function(PreGame2pDisconnectEvent value)? disconnect,
+    TResult? Function(PreGame2pErrorEvent value)? error,
   }) {
     return createLobby?.call(this);
   }
@@ -2183,6 +2246,7 @@ class _$PreGame2pCreateLobbyEventImpl implements PreGame2pCreateLobbyEvent {
     TResult Function(PreGame2pStartGameEvent value)? startGame,
     TResult Function(PreGame2pPopToStartEvent value)? popToStart,
     TResult Function(PreGame2pDisconnectEvent value)? disconnect,
+    TResult Function(PreGame2pErrorEvent value)? error,
     required TResult orElse(),
   }) {
     if (createLobby != null) {
@@ -2285,6 +2349,7 @@ class _$PreGame2pJoinLobbyEventImpl implements PreGame2pJoinLobbyEvent {
     required TResult Function(PreGame2pCreatedLobbyState state) startGame,
     required TResult Function() popToStart,
     required TResult Function() disconnect,
+    required TResult Function() error,
   }) {
     return joinLobby(state);
   }
@@ -2305,6 +2370,7 @@ class _$PreGame2pJoinLobbyEventImpl implements PreGame2pJoinLobbyEvent {
     TResult? Function(PreGame2pCreatedLobbyState state)? startGame,
     TResult? Function()? popToStart,
     TResult? Function()? disconnect,
+    TResult? Function()? error,
   }) {
     return joinLobby?.call(state);
   }
@@ -2325,6 +2391,7 @@ class _$PreGame2pJoinLobbyEventImpl implements PreGame2pJoinLobbyEvent {
     TResult Function(PreGame2pCreatedLobbyState state)? startGame,
     TResult Function()? popToStart,
     TResult Function()? disconnect,
+    TResult Function()? error,
     required TResult orElse(),
   }) {
     if (joinLobby != null) {
@@ -2350,6 +2417,7 @@ class _$PreGame2pJoinLobbyEventImpl implements PreGame2pJoinLobbyEvent {
     required TResult Function(PreGame2pStartGameEvent value) startGame,
     required TResult Function(PreGame2pPopToStartEvent value) popToStart,
     required TResult Function(PreGame2pDisconnectEvent value) disconnect,
+    required TResult Function(PreGame2pErrorEvent value) error,
   }) {
     return joinLobby(this);
   }
@@ -2368,6 +2436,7 @@ class _$PreGame2pJoinLobbyEventImpl implements PreGame2pJoinLobbyEvent {
     TResult? Function(PreGame2pStartGameEvent value)? startGame,
     TResult? Function(PreGame2pPopToStartEvent value)? popToStart,
     TResult? Function(PreGame2pDisconnectEvent value)? disconnect,
+    TResult? Function(PreGame2pErrorEvent value)? error,
   }) {
     return joinLobby?.call(this);
   }
@@ -2386,6 +2455,7 @@ class _$PreGame2pJoinLobbyEventImpl implements PreGame2pJoinLobbyEvent {
     TResult Function(PreGame2pStartGameEvent value)? startGame,
     TResult Function(PreGame2pPopToStartEvent value)? popToStart,
     TResult Function(PreGame2pDisconnectEvent value)? disconnect,
+    TResult Function(PreGame2pErrorEvent value)? error,
     required TResult orElse(),
   }) {
     if (joinLobby != null) {
@@ -2501,6 +2571,7 @@ class _$PreGame2pSubmitCustomAnswerEventImpl
     required TResult Function(PreGame2pCreatedLobbyState state) startGame,
     required TResult Function() popToStart,
     required TResult Function() disconnect,
+    required TResult Function() error,
   }) {
     return submitCustomAnswer(state, customAnswer);
   }
@@ -2521,6 +2592,7 @@ class _$PreGame2pSubmitCustomAnswerEventImpl
     TResult? Function(PreGame2pCreatedLobbyState state)? startGame,
     TResult? Function()? popToStart,
     TResult? Function()? disconnect,
+    TResult? Function()? error,
   }) {
     return submitCustomAnswer?.call(state, customAnswer);
   }
@@ -2541,6 +2613,7 @@ class _$PreGame2pSubmitCustomAnswerEventImpl
     TResult Function(PreGame2pCreatedLobbyState state)? startGame,
     TResult Function()? popToStart,
     TResult Function()? disconnect,
+    TResult Function()? error,
     required TResult orElse(),
   }) {
     if (submitCustomAnswer != null) {
@@ -2566,6 +2639,7 @@ class _$PreGame2pSubmitCustomAnswerEventImpl
     required TResult Function(PreGame2pStartGameEvent value) startGame,
     required TResult Function(PreGame2pPopToStartEvent value) popToStart,
     required TResult Function(PreGame2pDisconnectEvent value) disconnect,
+    required TResult Function(PreGame2pErrorEvent value) error,
   }) {
     return submitCustomAnswer(this);
   }
@@ -2584,6 +2658,7 @@ class _$PreGame2pSubmitCustomAnswerEventImpl
     TResult? Function(PreGame2pStartGameEvent value)? startGame,
     TResult? Function(PreGame2pPopToStartEvent value)? popToStart,
     TResult? Function(PreGame2pDisconnectEvent value)? disconnect,
+    TResult? Function(PreGame2pErrorEvent value)? error,
   }) {
     return submitCustomAnswer?.call(this);
   }
@@ -2602,6 +2677,7 @@ class _$PreGame2pSubmitCustomAnswerEventImpl
     TResult Function(PreGame2pStartGameEvent value)? startGame,
     TResult Function(PreGame2pPopToStartEvent value)? popToStart,
     TResult Function(PreGame2pDisconnectEvent value)? disconnect,
+    TResult Function(PreGame2pErrorEvent value)? error,
     required TResult orElse(),
   }) {
     if (submitCustomAnswer != null) {
@@ -2709,6 +2785,7 @@ class _$PreGame2pUpdateJoinedLobbyEventImpl
     required TResult Function(PreGame2pCreatedLobbyState state) startGame,
     required TResult Function() popToStart,
     required TResult Function() disconnect,
+    required TResult Function() error,
   }) {
     return updateJoinedLobby(answer);
   }
@@ -2729,6 +2806,7 @@ class _$PreGame2pUpdateJoinedLobbyEventImpl
     TResult? Function(PreGame2pCreatedLobbyState state)? startGame,
     TResult? Function()? popToStart,
     TResult? Function()? disconnect,
+    TResult? Function()? error,
   }) {
     return updateJoinedLobby?.call(answer);
   }
@@ -2749,6 +2827,7 @@ class _$PreGame2pUpdateJoinedLobbyEventImpl
     TResult Function(PreGame2pCreatedLobbyState state)? startGame,
     TResult Function()? popToStart,
     TResult Function()? disconnect,
+    TResult Function()? error,
     required TResult orElse(),
   }) {
     if (updateJoinedLobby != null) {
@@ -2774,6 +2853,7 @@ class _$PreGame2pUpdateJoinedLobbyEventImpl
     required TResult Function(PreGame2pStartGameEvent value) startGame,
     required TResult Function(PreGame2pPopToStartEvent value) popToStart,
     required TResult Function(PreGame2pDisconnectEvent value) disconnect,
+    required TResult Function(PreGame2pErrorEvent value) error,
   }) {
     return updateJoinedLobby(this);
   }
@@ -2792,6 +2872,7 @@ class _$PreGame2pUpdateJoinedLobbyEventImpl
     TResult? Function(PreGame2pStartGameEvent value)? startGame,
     TResult? Function(PreGame2pPopToStartEvent value)? popToStart,
     TResult? Function(PreGame2pDisconnectEvent value)? disconnect,
+    TResult? Function(PreGame2pErrorEvent value)? error,
   }) {
     return updateJoinedLobby?.call(this);
   }
@@ -2810,6 +2891,7 @@ class _$PreGame2pUpdateJoinedLobbyEventImpl
     TResult Function(PreGame2pStartGameEvent value)? startGame,
     TResult Function(PreGame2pPopToStartEvent value)? popToStart,
     TResult Function(PreGame2pDisconnectEvent value)? disconnect,
+    TResult Function(PreGame2pErrorEvent value)? error,
     required TResult orElse(),
   }) {
     if (updateJoinedLobby != null) {
@@ -2912,6 +2994,7 @@ class _$PreGame2pStartGameEventImpl implements PreGame2pStartGameEvent {
     required TResult Function(PreGame2pCreatedLobbyState state) startGame,
     required TResult Function() popToStart,
     required TResult Function() disconnect,
+    required TResult Function() error,
   }) {
     return startGame(state);
   }
@@ -2932,6 +3015,7 @@ class _$PreGame2pStartGameEventImpl implements PreGame2pStartGameEvent {
     TResult? Function(PreGame2pCreatedLobbyState state)? startGame,
     TResult? Function()? popToStart,
     TResult? Function()? disconnect,
+    TResult? Function()? error,
   }) {
     return startGame?.call(state);
   }
@@ -2952,6 +3036,7 @@ class _$PreGame2pStartGameEventImpl implements PreGame2pStartGameEvent {
     TResult Function(PreGame2pCreatedLobbyState state)? startGame,
     TResult Function()? popToStart,
     TResult Function()? disconnect,
+    TResult Function()? error,
     required TResult orElse(),
   }) {
     if (startGame != null) {
@@ -2977,6 +3062,7 @@ class _$PreGame2pStartGameEventImpl implements PreGame2pStartGameEvent {
     required TResult Function(PreGame2pStartGameEvent value) startGame,
     required TResult Function(PreGame2pPopToStartEvent value) popToStart,
     required TResult Function(PreGame2pDisconnectEvent value) disconnect,
+    required TResult Function(PreGame2pErrorEvent value) error,
   }) {
     return startGame(this);
   }
@@ -2995,6 +3081,7 @@ class _$PreGame2pStartGameEventImpl implements PreGame2pStartGameEvent {
     TResult? Function(PreGame2pStartGameEvent value)? startGame,
     TResult? Function(PreGame2pPopToStartEvent value)? popToStart,
     TResult? Function(PreGame2pDisconnectEvent value)? disconnect,
+    TResult? Function(PreGame2pErrorEvent value)? error,
   }) {
     return startGame?.call(this);
   }
@@ -3013,6 +3100,7 @@ class _$PreGame2pStartGameEventImpl implements PreGame2pStartGameEvent {
     TResult Function(PreGame2pStartGameEvent value)? startGame,
     TResult Function(PreGame2pPopToStartEvent value)? popToStart,
     TResult Function(PreGame2pDisconnectEvent value)? disconnect,
+    TResult Function(PreGame2pErrorEvent value)? error,
     required TResult orElse(),
   }) {
     if (startGame != null) {
@@ -3088,6 +3176,7 @@ class _$PreGame2pPopToStartEventImpl implements PreGame2pPopToStartEvent {
     required TResult Function(PreGame2pCreatedLobbyState state) startGame,
     required TResult Function() popToStart,
     required TResult Function() disconnect,
+    required TResult Function() error,
   }) {
     return popToStart();
   }
@@ -3108,6 +3197,7 @@ class _$PreGame2pPopToStartEventImpl implements PreGame2pPopToStartEvent {
     TResult? Function(PreGame2pCreatedLobbyState state)? startGame,
     TResult? Function()? popToStart,
     TResult? Function()? disconnect,
+    TResult? Function()? error,
   }) {
     return popToStart?.call();
   }
@@ -3128,6 +3218,7 @@ class _$PreGame2pPopToStartEventImpl implements PreGame2pPopToStartEvent {
     TResult Function(PreGame2pCreatedLobbyState state)? startGame,
     TResult Function()? popToStart,
     TResult Function()? disconnect,
+    TResult Function()? error,
     required TResult orElse(),
   }) {
     if (popToStart != null) {
@@ -3153,6 +3244,7 @@ class _$PreGame2pPopToStartEventImpl implements PreGame2pPopToStartEvent {
     required TResult Function(PreGame2pStartGameEvent value) startGame,
     required TResult Function(PreGame2pPopToStartEvent value) popToStart,
     required TResult Function(PreGame2pDisconnectEvent value) disconnect,
+    required TResult Function(PreGame2pErrorEvent value) error,
   }) {
     return popToStart(this);
   }
@@ -3171,6 +3263,7 @@ class _$PreGame2pPopToStartEventImpl implements PreGame2pPopToStartEvent {
     TResult? Function(PreGame2pStartGameEvent value)? startGame,
     TResult? Function(PreGame2pPopToStartEvent value)? popToStart,
     TResult? Function(PreGame2pDisconnectEvent value)? disconnect,
+    TResult? Function(PreGame2pErrorEvent value)? error,
   }) {
     return popToStart?.call(this);
   }
@@ -3189,6 +3282,7 @@ class _$PreGame2pPopToStartEventImpl implements PreGame2pPopToStartEvent {
     TResult Function(PreGame2pStartGameEvent value)? startGame,
     TResult Function(PreGame2pPopToStartEvent value)? popToStart,
     TResult Function(PreGame2pDisconnectEvent value)? disconnect,
+    TResult Function(PreGame2pErrorEvent value)? error,
     required TResult orElse(),
   }) {
     if (popToStart != null) {
@@ -3257,6 +3351,7 @@ class _$PreGame2pDisconnectEventImpl implements PreGame2pDisconnectEvent {
     required TResult Function(PreGame2pCreatedLobbyState state) startGame,
     required TResult Function() popToStart,
     required TResult Function() disconnect,
+    required TResult Function() error,
   }) {
     return disconnect();
   }
@@ -3277,6 +3372,7 @@ class _$PreGame2pDisconnectEventImpl implements PreGame2pDisconnectEvent {
     TResult? Function(PreGame2pCreatedLobbyState state)? startGame,
     TResult? Function()? popToStart,
     TResult? Function()? disconnect,
+    TResult? Function()? error,
   }) {
     return disconnect?.call();
   }
@@ -3297,6 +3393,7 @@ class _$PreGame2pDisconnectEventImpl implements PreGame2pDisconnectEvent {
     TResult Function(PreGame2pCreatedLobbyState state)? startGame,
     TResult Function()? popToStart,
     TResult Function()? disconnect,
+    TResult Function()? error,
     required TResult orElse(),
   }) {
     if (disconnect != null) {
@@ -3322,6 +3419,7 @@ class _$PreGame2pDisconnectEventImpl implements PreGame2pDisconnectEvent {
     required TResult Function(PreGame2pStartGameEvent value) startGame,
     required TResult Function(PreGame2pPopToStartEvent value) popToStart,
     required TResult Function(PreGame2pDisconnectEvent value) disconnect,
+    required TResult Function(PreGame2pErrorEvent value) error,
   }) {
     return disconnect(this);
   }
@@ -3340,6 +3438,7 @@ class _$PreGame2pDisconnectEventImpl implements PreGame2pDisconnectEvent {
     TResult? Function(PreGame2pStartGameEvent value)? startGame,
     TResult? Function(PreGame2pPopToStartEvent value)? popToStart,
     TResult? Function(PreGame2pDisconnectEvent value)? disconnect,
+    TResult? Function(PreGame2pErrorEvent value)? error,
   }) {
     return disconnect?.call(this);
   }
@@ -3358,6 +3457,7 @@ class _$PreGame2pDisconnectEventImpl implements PreGame2pDisconnectEvent {
     TResult Function(PreGame2pStartGameEvent value)? startGame,
     TResult Function(PreGame2pPopToStartEvent value)? popToStart,
     TResult Function(PreGame2pDisconnectEvent value)? disconnect,
+    TResult Function(PreGame2pErrorEvent value)? error,
     required TResult orElse(),
   }) {
     if (disconnect != null) {
@@ -3369,4 +3469,177 @@ class _$PreGame2pDisconnectEventImpl implements PreGame2pDisconnectEvent {
 
 abstract class PreGame2pDisconnectEvent implements PreGame2pEvent {
   factory PreGame2pDisconnectEvent() = _$PreGame2pDisconnectEventImpl;
+}
+
+/// @nodoc
+abstract class _$$PreGame2pErrorEventImplCopyWith<$Res> {
+  factory _$$PreGame2pErrorEventImplCopyWith(_$PreGame2pErrorEventImpl value,
+          $Res Function(_$PreGame2pErrorEventImpl) then) =
+      __$$PreGame2pErrorEventImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$PreGame2pErrorEventImplCopyWithImpl<$Res>
+    extends _$PreGame2pEventCopyWithImpl<$Res, _$PreGame2pErrorEventImpl>
+    implements _$$PreGame2pErrorEventImplCopyWith<$Res> {
+  __$$PreGame2pErrorEventImplCopyWithImpl(_$PreGame2pErrorEventImpl _value,
+      $Res Function(_$PreGame2pErrorEventImpl) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$PreGame2pErrorEventImpl implements PreGame2pErrorEvent {
+  _$PreGame2pErrorEventImpl();
+
+  @override
+  String toString() {
+    return 'PreGame2pEvent.error()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$PreGame2pErrorEventImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(bool isCreating) selectMode,
+    required TResult Function(WordleeTime time, String name,
+            WordleeAnswerType answerType, String? answer)
+        updateCreateLobby,
+    required TResult Function(String roomID, String name) updateJoinLobby,
+    required TResult Function(PreGame2pNewCreateLobbyState state) createLobby,
+    required TResult Function(PreGame2pNewJoinLobbyState state) joinLobby,
+    required TResult Function(
+            PreGame2pJoinedLobbyState state, String customAnswer)
+        submitCustomAnswer,
+    required TResult Function(String answer) updateJoinedLobby,
+    required TResult Function(PreGame2pCreatedLobbyState state) startGame,
+    required TResult Function() popToStart,
+    required TResult Function() disconnect,
+    required TResult Function() error,
+  }) {
+    return error();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(bool isCreating)? selectMode,
+    TResult? Function(WordleeTime time, String name,
+            WordleeAnswerType answerType, String? answer)?
+        updateCreateLobby,
+    TResult? Function(String roomID, String name)? updateJoinLobby,
+    TResult? Function(PreGame2pNewCreateLobbyState state)? createLobby,
+    TResult? Function(PreGame2pNewJoinLobbyState state)? joinLobby,
+    TResult? Function(PreGame2pJoinedLobbyState state, String customAnswer)?
+        submitCustomAnswer,
+    TResult? Function(String answer)? updateJoinedLobby,
+    TResult? Function(PreGame2pCreatedLobbyState state)? startGame,
+    TResult? Function()? popToStart,
+    TResult? Function()? disconnect,
+    TResult? Function()? error,
+  }) {
+    return error?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(bool isCreating)? selectMode,
+    TResult Function(WordleeTime time, String name,
+            WordleeAnswerType answerType, String? answer)?
+        updateCreateLobby,
+    TResult Function(String roomID, String name)? updateJoinLobby,
+    TResult Function(PreGame2pNewCreateLobbyState state)? createLobby,
+    TResult Function(PreGame2pNewJoinLobbyState state)? joinLobby,
+    TResult Function(PreGame2pJoinedLobbyState state, String customAnswer)?
+        submitCustomAnswer,
+    TResult Function(String answer)? updateJoinedLobby,
+    TResult Function(PreGame2pCreatedLobbyState state)? startGame,
+    TResult Function()? popToStart,
+    TResult Function()? disconnect,
+    TResult Function()? error,
+    required TResult orElse(),
+  }) {
+    if (error != null) {
+      return error();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(PreGame2pSelectModeEvent value) selectMode,
+    required TResult Function(PreGame2pUpdateCreateLobbyEvent value)
+        updateCreateLobby,
+    required TResult Function(PreGame2pUpdateJoinLobbyEvent value)
+        updateJoinLobby,
+    required TResult Function(PreGame2pCreateLobbyEvent value) createLobby,
+    required TResult Function(PreGame2pJoinLobbyEvent value) joinLobby,
+    required TResult Function(PreGame2pSubmitCustomAnswerEvent value)
+        submitCustomAnswer,
+    required TResult Function(PreGame2pUpdateJoinedLobbyEvent value)
+        updateJoinedLobby,
+    required TResult Function(PreGame2pStartGameEvent value) startGame,
+    required TResult Function(PreGame2pPopToStartEvent value) popToStart,
+    required TResult Function(PreGame2pDisconnectEvent value) disconnect,
+    required TResult Function(PreGame2pErrorEvent value) error,
+  }) {
+    return error(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(PreGame2pSelectModeEvent value)? selectMode,
+    TResult? Function(PreGame2pUpdateCreateLobbyEvent value)? updateCreateLobby,
+    TResult? Function(PreGame2pUpdateJoinLobbyEvent value)? updateJoinLobby,
+    TResult? Function(PreGame2pCreateLobbyEvent value)? createLobby,
+    TResult? Function(PreGame2pJoinLobbyEvent value)? joinLobby,
+    TResult? Function(PreGame2pSubmitCustomAnswerEvent value)?
+        submitCustomAnswer,
+    TResult? Function(PreGame2pUpdateJoinedLobbyEvent value)? updateJoinedLobby,
+    TResult? Function(PreGame2pStartGameEvent value)? startGame,
+    TResult? Function(PreGame2pPopToStartEvent value)? popToStart,
+    TResult? Function(PreGame2pDisconnectEvent value)? disconnect,
+    TResult? Function(PreGame2pErrorEvent value)? error,
+  }) {
+    return error?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(PreGame2pSelectModeEvent value)? selectMode,
+    TResult Function(PreGame2pUpdateCreateLobbyEvent value)? updateCreateLobby,
+    TResult Function(PreGame2pUpdateJoinLobbyEvent value)? updateJoinLobby,
+    TResult Function(PreGame2pCreateLobbyEvent value)? createLobby,
+    TResult Function(PreGame2pJoinLobbyEvent value)? joinLobby,
+    TResult Function(PreGame2pSubmitCustomAnswerEvent value)?
+        submitCustomAnswer,
+    TResult Function(PreGame2pUpdateJoinedLobbyEvent value)? updateJoinedLobby,
+    TResult Function(PreGame2pStartGameEvent value)? startGame,
+    TResult Function(PreGame2pPopToStartEvent value)? popToStart,
+    TResult Function(PreGame2pDisconnectEvent value)? disconnect,
+    TResult Function(PreGame2pErrorEvent value)? error,
+    required TResult orElse(),
+  }) {
+    if (error != null) {
+      return error(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class PreGame2pErrorEvent implements PreGame2pEvent {
+  factory PreGame2pErrorEvent() = _$PreGame2pErrorEventImpl;
 }

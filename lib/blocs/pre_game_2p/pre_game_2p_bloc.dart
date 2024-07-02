@@ -16,7 +16,7 @@ class PreGame2pBloc extends Bloc<PreGame2pEvent, PreGame2pState> {
     required this.gameLobbyRepository,
     required this.gameSettingsRepository,
   }) : super(
-          PreGame2pState.init(),
+          PreGame2pState.init(hasError: false),
         ) {
     on<PreGame2pSelectModeEvent>(_selectMode, transformer: restartable());
     on<PreGame2pUpdateCreateLobbyEvent>(_updateCreateLobby,
@@ -32,6 +32,7 @@ class PreGame2pBloc extends Bloc<PreGame2pEvent, PreGame2pState> {
     on<PreGame2pStartGameEvent>(_startGame, transformer: restartable());
     on<PreGame2pPopToStartEvent>(_popToStart, transformer: restartable());
     on<PreGame2pDisconnectEvent>(_disconnect, transformer: restartable());
+    on<PreGame2pErrorEvent>(_onError, transformer: restartable());
   }
 
   final GameLobbyRepository gameLobbyRepository;
@@ -69,12 +70,27 @@ class PreGame2pBloc extends Bloc<PreGame2pEvent, PreGame2pState> {
     return super.close();
   }
 
+  @override
+  void onError(Object error, StackTrace stackTrace) {
+    add(PreGame2pEvent.error());
+    super.onError(error, stackTrace);
+  }
+
+  _onError(
+    PreGame2pErrorEvent event,
+    Emitter<PreGame2pState> emit,
+  ) {
+    emit(
+      PreGame2pState.init(hasError: true),
+    );
+  }
+
   _selectMode(
     PreGame2pSelectModeEvent event,
     Emitter<PreGame2pState> emit,
   ) {
     state.whenOrNull<void>(
-      init: () {
+      init: (a) {
         emit(
           event.isCreating ? newCreateLobby : newJoinLobby,
         );
@@ -158,6 +174,7 @@ class PreGame2pBloc extends Bloc<PreGame2pEvent, PreGame2pState> {
         playerName: createState.name,
       );
     });
+
     final session = await gameLobbyRepository.createLobby(
       time: createState.time,
       name: createState.name,
@@ -310,7 +327,7 @@ class PreGame2pBloc extends Bloc<PreGame2pEvent, PreGame2pState> {
     Emitter<PreGame2pState> emit,
   ) async {
     emit(
-      PreGame2pState.init(),
+      PreGame2pState.init(hasError: false),
     );
   }
 
@@ -333,7 +350,7 @@ class PreGame2pBloc extends Bloc<PreGame2pEvent, PreGame2pState> {
 
 @freezed
 class PreGame2pState with _$PreGame2pState {
-  factory PreGame2pState.init() = PreGame2pInitState;
+  factory PreGame2pState.init({required bool hasError}) = PreGame2pInitState;
 
   factory PreGame2pState.newCreateLobby({
     required WordleeTime time,
@@ -431,4 +448,6 @@ class PreGame2pEvent with _$PreGame2pEvent {
   factory PreGame2pEvent.popToStart() = PreGame2pPopToStartEvent;
 
   factory PreGame2pEvent.disconnect() = PreGame2pDisconnectEvent;
+
+  factory PreGame2pEvent.error() = PreGame2pErrorEvent;
 }
