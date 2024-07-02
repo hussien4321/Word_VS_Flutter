@@ -56,7 +56,7 @@ class _PreGame1pScreen extends StatelessWidget with PreGameBaseMixin {
       return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: true,
-          title: const Text('Game Options (1p)'),
+          title: const Text('Game settings'),
           centerTitle: true,
         ),
         body: buildPaddedContent(

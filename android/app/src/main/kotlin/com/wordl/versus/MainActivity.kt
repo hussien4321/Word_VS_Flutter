@@ -1,4 +1,4 @@
-package com.example.wordle_vs
+package com.wordl.versus
 
 import io.flutter.embedding.android.FlutterActivity
 
