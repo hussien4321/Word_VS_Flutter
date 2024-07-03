@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: GetMaterialApp(
-        title: 'WordlVS',
+        title: 'Word VS',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.grey,

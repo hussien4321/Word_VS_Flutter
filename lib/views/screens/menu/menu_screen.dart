@@ -12,7 +12,7 @@ class MenuScreen extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text('WordlVS'),
+        title: const Text('Word VS'),
         centerTitle: true,
       ),
       body: Column(
